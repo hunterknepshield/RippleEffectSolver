@@ -9,6 +9,7 @@
 #ifndef validity_checks_hpp
 #define validity_checks_hpp
 
+#include <map>
 #include <utility>
 #include <vector>
 
@@ -20,10 +21,10 @@ bool checkRow(const std::pair<int, int>& cell, int value,
 bool checkColumn(const std::pair<int, int>& cell, int value,
 				 const std::vector<std::vector<int>>& board);
 
-// TODO
 // Returns true if the value is a valid placement in the cell for the room.
 bool checkRoom(const std::pair<int, int>& cell, int value,
 			   const std::vector<std::vector<int>>& board,
-			   const std::vector<std::vector<int>>& roomIds);
+			   const std::vector<std::vector<int>>& roomIds,
+			   const std::map<int, std::vector<std::pair<int, int>>>& cellsInRoom);
 
 #endif /* validity_checks_hpp */

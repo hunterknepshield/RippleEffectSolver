@@ -9,6 +9,7 @@
 #include "validity_checks.hpp"
 
 #include <algorithm>
+#include <map>
 #include <utility>
 #include <vector>
 
@@ -40,7 +41,14 @@ bool checkColumn(const std::pair<int, int>& cell, int value,
 
 bool checkRoom(const std::pair<int, int>& cell, int value,
 			   const std::vector<std::vector<int>>& board,
-			   const std::vector<std::vector<int>>& roomIds) {
-	// TODO
-	return false;
+			   const std::vector<std::vector<int>>& roomIds,
+			   const std::map<int, std::vector<std::pair<int, int>>>& cellsInRoom) {
+	// The room must be clear of the same value.
+	int roomId = roomIds[cell.first][cell.second];
+	for (const auto& roomCell : cellsInRoom.at(roomId)) {
+		if (board[roomCell.first][roomCell.second] == value) {
+			return false;
+		}
+	}
+	return true;
 }
