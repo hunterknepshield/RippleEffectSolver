@@ -37,16 +37,21 @@ std::vector<int> interpretString(const std::string& s) {
 int main(void) {
 	std::string s;
 	// Read in the cell values on the board (0 is unset) until an empty line is reached
-	size_t lineCount = -1;  // Unknown so far. Enforced to be the same for all rows.
+	size_t rowWidth = -1;  // Unknown so far. Enforced to be the same for all rows.
 	std::vector<std::vector<int>> board;
 	do {
 		std::getline(std::cin, s);
-		if (s.empty())
+		if (s.empty()) {
+			if (board.empty()) {
+				std::cerr << "Board cannot be empty.";
+				continue;
+			}
 			break;
+		}
 		const std::vector<int>& cellValues = interpretString(s);
-		if (lineCount == -1) {
-			lineCount = cellValues.size();
-		} else if (lineCount != cellValues.size()) {
+		if (rowWidth == -1) {
+			rowWidth = cellValues.size();
+		} else if (rowWidth != cellValues.size()) {
 			std::cerr << "Inconsistent line size. Terminating." << std::endl;
 			return 1;
 		}
@@ -65,7 +70,7 @@ int main(void) {
 			break;
 		}
 		const std::vector<int>& cellIds = interpretString(s);
-		if (lineCount != cellIds.size()) {
+		if (rowWidth != cellIds.size()) {
 			std::cerr << "Inconsistent line size. Terminating." << std::endl;
 			return 1;
 		}
