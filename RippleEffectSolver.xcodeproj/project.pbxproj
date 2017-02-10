@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5AF3D3471E4D385A008FC4F1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D3461E4D385A008FC4F1 /* main.cpp */; };
 		5AF3D3501E4D7817008FC4F1 /* print_board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D34E1E4D7817008FC4F1 /* print_board.cpp */; };
+		5AF3D3551E4D833E008FC4F1 /* read_input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D3531E4D833E008FC4F1 /* read_input.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -30,6 +31,8 @@
 		5AF3D34E1E4D7817008FC4F1 /* print_board.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = print_board.cpp; sourceTree = "<group>"; };
 		5AF3D34F1E4D7817008FC4F1 /* print_board.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = print_board.hpp; sourceTree = "<group>"; };
 		5AF3D3521E4D7D25008FC4F1 /* Solution1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Solution1.txt; sourceTree = "<group>"; };
+		5AF3D3531E4D833E008FC4F1 /* read_input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = read_input.cpp; sourceTree = "<group>"; };
+		5AF3D3541E4D833E008FC4F1 /* read_input.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = read_input.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +69,8 @@
 				5AF3D3461E4D385A008FC4F1 /* main.cpp */,
 				5AF3D34E1E4D7817008FC4F1 /* print_board.cpp */,
 				5AF3D34F1E4D7817008FC4F1 /* print_board.hpp */,
+				5AF3D3531E4D833E008FC4F1 /* read_input.cpp */,
+				5AF3D3541E4D833E008FC4F1 /* read_input.hpp */,
 			);
 			path = RippleEffectSolver;
 			sourceTree = "<group>";
@@ -137,6 +142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5AF3D3501E4D7817008FC4F1 /* print_board.cpp in Sources */,
+				5AF3D3551E4D833E008FC4F1 /* read_input.cpp in Sources */,
 				5AF3D3471E4D385A008FC4F1 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

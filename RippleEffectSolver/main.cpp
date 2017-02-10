@@ -15,73 +15,24 @@
 // message and board on action.
 #define VERBOSITY 2
 
-#include <cstdlib>
 #include <iostream>
 #include <map>
-#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "read_input.hpp"
 #include "print_board.hpp"
 
-std::vector<int> interpretString(const std::string& s) {
-	std::vector<int> v;
-	std::stringstream stream(s);
-	while (true) {
-		int i;
-		stream >> i;
-		if (!stream)
-			break;
-		v.push_back(i);
-	}
-	return v;
-}
-
 int main(void) {
-	std::string s;
-	// Read in the cell values on the board (0 is unset) until an empty line is reached
-	size_t rowWidth = -1;  // Unknown so far. Enforced to be the same for all rows.
-	std::vector<std::vector<int>> board;
-	do {
-		std::getline(std::cin, s);
-		if (s.empty()) {
-			if (board.empty()) {
-				std::cerr << "Board cannot be empty.";
-				continue;
-			}
-			break;
-		}
-		const std::vector<int>& cellValues = interpretString(s);
-		if (rowWidth == -1) {
-			rowWidth = cellValues.size();
-		} else if (rowWidth != cellValues.size()) {
-			std::cerr << "Inconsistent line size. Terminating." << std::endl;
-			return 1;
-		}
-		board.push_back(cellValues);
-	} while (true);
+	size_t boardWidth = 0;
+	std::vector<std::vector<int>> board, roomIds;
+	if (!readCells(&boardWidth, &board) ||
+		!readRooms(boardWidth, board.size(), &roomIds)) {
+		return 1;
+	}
 	
-	// Now read in the room IDs. They can be arbitrary ints, not just sequential.
-	std::vector<std::vector<int>> roomIds;
-	do {
-		std::getline(std::cin, s);
-		if (s.empty()) {
-			if (roomIds.size() != board.size()) {
-				std::cerr << "Failed to specify room IDs for all cells. Terminating." << std::endl;
-				return 1;
-			}
-			break;
-		}
-		const std::vector<int>& cellIds = interpretString(s);
-		if (rowWidth != cellIds.size()) {
-			std::cerr << "Inconsistent line size. Terminating." << std::endl;
-			return 1;
-		}
-		roomIds.push_back(cellIds);
-	} while (true);
-	
-	if (VERBOSITY > 0) {
+	if (VERBOSITY) {
 		std::cout << "Initial board state:" << std::endl;
 		printBoard(board, roomIds);
 	}
@@ -96,9 +47,13 @@ int main(void) {
 			cellsInRoom[roomIds[i][j]].push_back({i, j});
 		}
 	}
-	// TODO enforce contiguous rooms here? For now assuming valid input.
+	// TODO enforce contiguous rooms here? May also want to validate givens.
+	// For now assuming valid input.
 	
 	// Easiest thing to do: fill in rooms of size 1.
+	if (VERBOSITY) {
+		std::cout << "Filling in any 1x1 rooms with 1s..." << std::endl;
+	}
 	for (const auto& roomAndCells : cellsInRoom) {
 		if (roomAndCells.second.size() == 1) {
 			int x, y;
