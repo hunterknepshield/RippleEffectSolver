@@ -33,6 +33,10 @@
 		5AF3D3521E4D7D25008FC4F1 /* Solution1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Solution1.txt; sourceTree = "<group>"; };
 		5AF3D3531E4D833E008FC4F1 /* read_input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = read_input.cpp; sourceTree = "<group>"; };
 		5AF3D3541E4D833E008FC4F1 /* read_input.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = read_input.hpp; sourceTree = "<group>"; };
+		5AF3D3561E4D875B008FC4F1 /* Puzzle2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Puzzle2.txt; sourceTree = "<group>"; };
+		5AF3D3571E4D876E008FC4F1 /* Solution2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Solution2.txt; sourceTree = "<group>"; };
+		5AF3D3581E4D8776008FC4F1 /* Puzzle3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Puzzle3.txt; sourceTree = "<group>"; };
+		5AF3D3591E4D877F008FC4F1 /* Solution3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Solution3.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +84,10 @@
 			children = (
 				5AF3D34D1E4D6A58008FC4F1 /* Puzzle1.txt */,
 				5AF3D3521E4D7D25008FC4F1 /* Solution1.txt */,
+				5AF3D3561E4D875B008FC4F1 /* Puzzle2.txt */,
+				5AF3D3571E4D876E008FC4F1 /* Solution2.txt */,
+				5AF3D3581E4D8776008FC4F1 /* Puzzle3.txt */,
+				5AF3D3591E4D877F008FC4F1 /* Solution3.txt */,
 			);
 			name = Puzzles;
 			sourceTree = "<group>";
