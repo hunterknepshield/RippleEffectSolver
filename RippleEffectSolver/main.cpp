@@ -13,7 +13,7 @@
 
 // Verbosity settings. 0 = silent, 1 = print message on action, 2 = print
 // message and board on action.
-#define VERBOSITY 2
+int VERBOSITY = 2;
 
 #include <algorithm>
 #include <iostream>
