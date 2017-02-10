@@ -19,8 +19,8 @@
 void printBoard(const std::vector<std::vector<int>>& board,
 				const std::vector<std::vector<int>>& /* unused */ roomIds) {
 	for (const auto& row : board) {
-		for (int i = 0; i < row.size() - 1; i++) {
-			std::cout << row[i] << ' ';
+		for (int c = 0; c < row.size() - 1; c++) {
+			std::cout << row[c] << ' ';
 		}
 		std::cout << row.back() << std::endl;
 	}
@@ -50,9 +50,9 @@ void printBoard(const std::vector<std::vector<int>>& board,
 				const std::vector<std::vector<int>>& roomIds) {
 	// Top row of board symbols.
 	std::cout << SE;
-	for (int i = 0; i < board[0].size() - 1; i++) {
+	for (int c = 0; c < board[0].size() - 1; c++) {
 		std::cout << EW;
-		if (roomIds[0][i] != roomIds[0][i + 1]) {
+		if (roomIds[0][c] != roomIds[0][c + 1]) {
 			std::cout << SEW;
 		} else {
 			std::cout << EW;
@@ -61,54 +61,54 @@ void printBoard(const std::vector<std::vector<int>>& board,
 	std::cout << EW << SW << std::endl;
 	
 	// Interior rows of cell values and board symbols.
-	for (int i = 0; i < board.size() - 1; i++) {
+	for (int r = 0; r < board.size() - 1; r++) {
 		// Row of cell contents.
 		std::cout << NS;
-		for (int j = 0; j < board[i].size() - 1; j++) {
-			if (board[i][j]) {
-				std::cout << board[i][j];
+		for (int c = 0; c < board[r].size() - 1; c++) {
+			if (board[r][c]) {
+				std::cout << board[r][c];
 			} else {
 				std::cout << ' ';
 			}
-			if (roomIds[i][j] != roomIds[i][j + 1]) {
+			if (roomIds[r][c] != roomIds[r][c + 1]) {
 				std::cout << NS;
 			} else {
 				std::cout << ' ';
 			}
 		}
-		if (board[i].back()) {
-			std::cout << board[i].back();
+		if (board[r].back()) {
+			std::cout << board[r].back();
 		} else {
 			std::cout << ' ';
 		}
 		std::cout << NS << std::endl;
 		
 		// Row of board symbols.
-		if (roomIds[i][0] != roomIds[i + 1][0]) {
+		if (roomIds[r][0] != roomIds[r + 1][0]) {
 			std::cout << NSE;
 		} else {
 			std::cout << NS;
 		}
-		for (int j = 0; j < board[i].size() - 1; j++) {
-			if (roomIds[i][j] != roomIds[i + 1][j]) {
+		for (int c = 0; c < board[r].size() - 1; c++) {
+			if (roomIds[r][c] != roomIds[r + 1][c]) {
 				std::cout << EW;
 			} else {
 				std::cout << ' ';
 			}
 			
-			// Space between four cells. Could be empty or anything except a corner. No easy way to do this.
-			// Bit field; bit 0 = N, bit 1 = S, bit 2 = E, bit 3 = W.
+			// Space between four cells. Could be any of the special characters.
+			// No particularly easy way to do this.
 			std::bitset<4> space;  // Empty for now
-			if (roomIds[i][j] != roomIds[i][j + 1]) {
+			if (roomIds[r][c] != roomIds[r][c + 1]) {
 				space[0].flip();  // N
 			}
-			if (roomIds[i + 1][j] != roomIds[i + 1][j + 1]) {
+			if (roomIds[r + 1][c] != roomIds[r + 1][c + 1]) {
 				space[1].flip();  // S
 			}
-			if (roomIds[i][j + 1] != roomIds[i + 1][j + 1]) {
+			if (roomIds[r][c + 1] != roomIds[r + 1][c + 1]) {
 				space[2].flip();  // E
 			}
-			if (roomIds[i][j] != roomIds[i + 1][j]) {
+			if (roomIds[r][c] != roomIds[r + 1][c]) {
 				space[3].flip();  // W
 			}
 			switch (space.to_ulong()) {
@@ -153,7 +153,7 @@ void printBoard(const std::vector<std::vector<int>>& board,
 					std::cout << "?";
 			}
 		}
-		if (roomIds[i].back() != roomIds[i + 1].back()) {
+		if (roomIds[r].back() != roomIds[r + 1].back()) {
 			std::cout << EW << NSW;
 		} else {
 			std::cout << ' ' << NS;
@@ -163,13 +163,13 @@ void printBoard(const std::vector<std::vector<int>>& board,
 	
 	// Last row of cell contents.
 	std::cout << NS;
-	for (int i = 0; i < board.back().size() - 1; i++) {
-		if (board.back()[i]) {
-			std::cout << board.back()[i];
+	for (int c = 0; c < board.back().size() - 1; c++) {
+		if (board.back()[c]) {
+			std::cout << board.back()[c];
 		} else {
 			std::cout << ' ';
 		}
-		if (roomIds.back()[i] != roomIds.back()[i + 1]) {
+		if (roomIds.back()[c] != roomIds.back()[c + 1]) {
 			std::cout << NS;
 		} else {
 			std::cout << ' ';
@@ -184,9 +184,9 @@ void printBoard(const std::vector<std::vector<int>>& board,
 	
 	// Last row of board symbols.
 	std::cout << NE;
-	for (int i = 0; i < board.back().size() - 1; i++) {
+	for (int c = 0; c < board.back().size() - 1; c++) {
 		std::cout << EW;
-		if (roomIds.back()[i] != roomIds.back()[i + 1]) {
+		if (roomIds.back()[c] != roomIds.back()[c + 1]) {
 			std::cout << NEW;
 		} else {
 			std::cout << EW;

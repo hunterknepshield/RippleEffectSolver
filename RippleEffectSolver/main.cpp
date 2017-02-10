@@ -39,14 +39,16 @@ int main(void) {
 	
 	// Now some initial setup...
 	// Maps room ID to a list of pairs of cell coordinates in the room.
-	// To get the size of room x, use cellsInRoom[x].size().
 	std::map<int, std::vector<std::pair<int, int>>> cellsInRoom;
-	// Now fill in cellsInRoom.
-	for (int i = 0; i < roomIds.size(); i++) {
-		for (int j = 0; j < roomIds[i].size(); j++) {
-			cellsInRoom[roomIds[i][j]].push_back({i, j});
+	for (int r = 0; r < roomIds.size(); r++) {
+		for (int c = 0; c < roomIds[r].size(); c++) {
+			cellsInRoom[roomIds[r][c]].push_back({r, c});
 		}
 	}
+	// To get the size of room n, use cellsInRoom[n].size().
+	// To get the value of cell (r, c), use board[r][c].
+	// To get the room ID of cell (r, c), use roomIds[r][c].
+	
 	// TODO enforce contiguous rooms here? May also want to validate givens.
 	// For now assuming valid input.
 	
@@ -56,15 +58,15 @@ int main(void) {
 	}
 	for (const auto& roomAndCells : cellsInRoom) {
 		if (roomAndCells.second.size() == 1) {
-			int x, y;
-			std::tie(x, y) = roomAndCells.second.front();
-			if (board[x][y] == 0) {
-				board[x][y] = 1;
+			int r, c;
+			std::tie(r, c) = roomAndCells.second.front();
+			if (board[r][c] == 0) {
+				board[r][c] = 1;
 				switch (VERBOSITY) {
 					case 2:
 						printBoard(board, roomIds);
 					case 1:
-						std::cout << "Filled in a forced 1 at (" << x + 1 << ", " << y + 1 << ")." << std::endl;
+						std::cout << "Filled in a forced 1 at (" << r + 1 << ", " << c + 1 << ")." << std::endl;
 					default:
 						break;
 				}
