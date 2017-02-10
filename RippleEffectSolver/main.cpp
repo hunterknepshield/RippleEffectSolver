@@ -22,8 +22,9 @@
 #include <utility>
 #include <vector>
 
-#include "read_input.hpp"
 #include "print_board.hpp"
+#include "read_input.hpp"
+#include "validity_checks.hpp"
 
 int main(void) {
 	size_t boardWidth = 0;
@@ -73,23 +74,21 @@ int main(void) {
 			}
 			int r, c;
 			std::vector<bool> completedNumbers(roomAndCells.second.size(), false);
+			std::vector<std::pair<int, int>> emptyCells;
 			for (const auto& cell : roomAndCells.second) {
 				std::tie(r, c) = cell;
 				if (board[r][c]) {
 					completedNumbers[board[r][c] - 1] = true;
+				} else {
+					emptyCells.push_back(cell);
 				}
 			}
 			// The easiest thing to do is complete a room that has only one
-			// empty cell. This also covers 1x1 rooms that must be 1s.
-			if (std::count(completedNumbers.begin(), completedNumbers.end(), false) == 1) {
+			// empty cell. This also covers 1x1 rooms that must therefore be 1s.
+			if (emptyCells.size() == 1) {
 				auto valueIt = std::find(completedNumbers.begin(), completedNumbers.end(), false);
-				int index = (int)(valueIt - completedNumbers.begin());
-				int value = index + 1;
-				auto cellIt = std::find_if(roomAndCells.second.begin(), roomAndCells.second.end(),
-										   [&board](const std::pair<int, int>& cell) {
-											   return board[cell.first][cell.second] == 0;
-										   });
-				std::tie(r, c) = *cellIt;
+				int value = (int)(valueIt - completedNumbers.begin()) + 1;
+				std::tie(r, c) = emptyCells.front();
 				board[r][c] = value;
 				cellsCompletedInRoom[roomIds[r][c]]++;
 				modifiedBoard = true;
@@ -100,6 +99,48 @@ int main(void) {
 						std::cout << "Filled in a " << value << " at (" << r + 1 << ", " << c + 1 << ") to complete the room." << std::endl;
 					default:
 						break;
+				}
+				// We're now done with this room.
+				continue;
+			}
+			// If we have more than 1 empty cell, start looking through each one
+			// and see if we can fill it in with exactly one missing number.
+			std::vector<int> possibilities;
+			for (int i = 0; i < roomAndCells.second.size(); i++) {
+				if (!completedNumbers[i]) {
+					std::cout << "Room " << roomAndCells.first << " is still missing " << i + 1 << std::endl;
+					possibilities.push_back(i + 1);
+				}
+			}
+			int validPossibility;
+			for (const auto& cell : emptyCells) {
+				// This will be non-zero if there's exactly 1 possible value for
+				// this cell.
+				validPossibility = 0;
+				std::tie(r, c) = cell;
+				for (int possibility : possibilities) {
+					if (checkRow(cell, possibility, board) && checkColumn(cell, possibility, board)) {
+						std::cout << possibility << " is valid for (" << r + 1 << ", " << c + 1 << ") in room " << roomAndCells.first << "." << std::endl;
+						if (validPossibility) {
+							// Multiple possibilities, so do nothing.
+							validPossibility = 0;
+							break;
+						}
+						validPossibility = possibility;
+					}
+				}
+				if (validPossibility) {
+					board[r][c] = validPossibility;
+					cellsCompletedInRoom[roomIds[r][c]]++;
+					modifiedBoard = true;
+					switch (VERBOSITY) {
+						case 2:
+							printBoard(board, roomIds);
+						case 1:
+							std::cout << "Filled in a " << validPossibility << " at (" << r + 1 << ", " << c + 1 << ") since it's the only possibility." << std::endl;
+						default:
+							break;
+					}
 				}
 			}
 		}
