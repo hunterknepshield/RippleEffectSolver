@@ -14,6 +14,27 @@
 #include <utility>
 #include <vector>
 
+#define PRETTY_PRINT_BOARD true
+
+// String constants for easy usage. N > S > E > W.
+#define EW "─"
+#define NS "│"
+#define SE "┌"
+#define SW "┐"
+#define NE "└"
+#define NW "┘"
+#define NSE "├"
+#define NSW "┤"
+#define SEW "┬"
+#define NEW "┴"
+#define NSEW "┼"
+
+void test() {
+	auto string = "┃";
+	std::cout << string << std::endl;
+	std::cout << typeid(string).name() << std::endl;
+}
+
 std::vector<int> interpretString(const std::string& s) {
 	std::vector<int> v;
 	std::stringstream stream(s);
@@ -27,7 +48,21 @@ std::vector<int> interpretString(const std::string& s) {
 	return v;
 }
 
-void printBoard(const std::vector<std::vector<int>>& board) {
+void printBoard(const std::vector<std::vector<int>>& board,
+				const std::vector<std::vector<int>>& roomIds) {
+	// Top row of board symbols
+	
+	
+	// Row of cell values, row of board symbols
+	for (int i = 0; i < board.size(); i++) {
+		for (int j = 0; j < board[i].size(); j++) {
+			
+		}
+	}
+}
+
+void printBoardUgly(const std::vector<std::vector<int>>& board,
+					const std::vector<std::vector<int>>& /* unused */ roomIds) {
 	for (const auto& row : board) {
 		for (int cell : row) {
 			std::cout << cell << " ";
@@ -55,8 +90,6 @@ int main(void) {
 		board.push_back(cellValues);
 	} while (true);
 	
-	printBoard(board);
-	
 	// Now read in the room IDs. They can be arbitrary ints, not just sequential.
 	std::vector<std::vector<int>> roomIds;
 	do {
@@ -75,6 +108,8 @@ int main(void) {
 		}
 		roomIds.push_back(cellIds);
 	} while (true);
+	
+	PRETTY_PRINT_BOARD ? printBoard(board, roomIds) : printBoardUgly(board, roomIds);
 	
 	// Now some initial setup...
 	// Maps room ID to a list of pairs of cell coordinates in the room.
