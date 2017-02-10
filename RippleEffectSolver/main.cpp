@@ -11,6 +11,10 @@
 // then won't print any sort of room borders.
 // #define UGLY_PRINT_BOARD
 
+// Verbosity settings. 0 = silent, 1 = print message on action, 2 = print
+// message and board on action.
+#define VERBOSITY 2
+
 #include <cstdlib>
 #include <iostream>
 #include <map>
@@ -77,8 +81,10 @@ int main(void) {
 		roomIds.push_back(cellIds);
 	} while (true);
 	
-	std::cout << "Initial board state:" << std::endl;
-	printBoard(board, roomIds);
+	if (VERBOSITY > 0) {
+		std::cout << "Initial board state:" << std::endl;
+		printBoard(board, roomIds);
+	}
 	
 	// Now some initial setup...
 	// Maps room ID to a list of pairs of cell coordinates in the room.
@@ -87,11 +93,29 @@ int main(void) {
 	// Now fill in cellsInRoom.
 	for (int i = 0; i < roomIds.size(); i++) {
 		for (int j = 0; j < roomIds[i].size(); j++) {
-			cellsInRoom[i].push_back({i, j});
+			cellsInRoom[roomIds[i][j]].push_back({i, j});
 		}
 	}
 	// TODO enforce contiguous rooms here? For now assuming valid input.
 	
+	// Easiest thing to do: fill in rooms of size 1.
+	for (const auto& roomAndCells : cellsInRoom) {
+		if (roomAndCells.second.size() == 1) {
+			int x, y;
+			std::tie(x, y) = roomAndCells.second.front();
+			if (board[x][y] == 0) {
+				board[x][y] = 1;
+				switch (VERBOSITY) {
+					case 2:
+						printBoard(board, roomIds);
+					case 1:
+						std::cout << "Filled in a forced 1 at (" << x + 1 << ", " << y + 1 << ")." << std::endl;
+					default:
+						break;
+				}
+			}
+		}
+	}
 	
     return 0;
 }
