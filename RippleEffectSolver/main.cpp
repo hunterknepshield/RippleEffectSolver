@@ -7,8 +7,9 @@
 //
 
 // If your console or font doesn't play nice with the pretty board symbols,
-// set this to false and it will print only numbers.
-#define PRETTY_PRINT_BOARD true
+// uncomment this #define and it will print only numbers. The caveat is that it
+// then won't print any sort of room borders.
+// #define UGLY_PRINT_BOARD
 
 #include <cstdlib>
 #include <iostream>
@@ -71,7 +72,8 @@ int main(void) {
 		roomIds.push_back(cellIds);
 	} while (true);
 	
-	PRETTY_PRINT_BOARD ? printBoard(board, roomIds) : printBoardUgly(board, roomIds);
+	std::cout << "Initial board state:" << std::endl;
+	printBoard(board, roomIds);
 	
 	// Now some initial setup...
 	// Maps room ID to a list of pairs of cell coordinates in the room.

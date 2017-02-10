@@ -12,8 +12,25 @@
 #include <iostream>
 #include <vector>
 
-// String constants for easy usage. N > S > E > W.
-// Also #define'd away since they need the weird scary string types because these are Unicode characters, not boring ASCII.
+#ifdef UGLY_PRINT_BOARD
+
+// The ugly, simple version of the printing routine. Doesn't show room borders,
+// just cells' values.
+void printBoard(const std::vector<std::vector<int>>& board,
+				const std::vector<std::vector<int>>& /* unused */ roomIds) {
+	for (const auto& row : board) {
+		for (int i = 0; i < row.size() - 1; i++) {
+			std::cout << row[i] << ' ';
+		}
+		std::cout << row.back() << std::endl;
+	}
+}
+
+#else /* !UGLY_PRINT_BOARD */
+
+// String constants for easy usage. N > S > E > W in names.
+// Also #define'd away since they need the weird scary string types because
+// these are Unicode characters, not boring ASCII (i.e. not normal `char`).
 #define EW "─"
 #define NS "│"
 #define SE "┌"
@@ -26,6 +43,9 @@
 #define NEW "┴"
 #define NSEW "┼"
 
+// The pretty version of the board printing routine. Uses special Unicode
+// characters to show room borders in addition to the cells' values. However,
+// these characters don't play nice with all fonts.
 void printBoard(const std::vector<std::vector<int>>& board,
 				const std::vector<std::vector<int>>& roomIds) {
 	// Top row of board symbols.
@@ -45,14 +65,23 @@ void printBoard(const std::vector<std::vector<int>>& board,
 		// Row of cell contents.
 		std::cout << NS;
 		for (int j = 0; j < board[i].size() - 1; j++) {
-			std::cout << board[i][j];
+			if (board[i][j]) {
+				std::cout << board[i][j];
+			} else {
+				std::cout << ' ';
+			}
 			if (roomIds[i][j] != roomIds[i][j + 1]) {
 				std::cout << NS;
 			} else {
-				std::cout << " ";
+				std::cout << ' ';
 			}
 		}
-		std::cout << board[i].back() << NS << std::endl;
+		if (board[i].back()) {
+			std::cout << board[i].back();
+		} else {
+			std::cout << ' ';
+		}
+		std::cout << NS << std::endl;
 		
 		// Row of board symbols.
 		if (roomIds[i][0] != roomIds[i + 1][0]) {
@@ -64,7 +93,7 @@ void printBoard(const std::vector<std::vector<int>>& board,
 			if (roomIds[i][j] != roomIds[i + 1][j]) {
 				std::cout << EW;
 			} else {
-				std::cout << " ";
+				std::cout << ' ';
 			}
 			
 			// Space between four cells. Could be empty or anything except a corner. No easy way to do this.
@@ -84,7 +113,7 @@ void printBoard(const std::vector<std::vector<int>>& board,
 			}
 			switch (space.to_ulong()) {
 				case 0:
-					std::cout << " ";
+					std::cout << ' ';
 					break;
 				case 3:
 					std::cout << NS;
@@ -127,7 +156,7 @@ void printBoard(const std::vector<std::vector<int>>& board,
 		if (roomIds[i].back() != roomIds[i + 1].back()) {
 			std::cout << EW << NSW;
 		} else {
-			std::cout << " " << NS;
+			std::cout << ' ' << NS;
 		}
 		std::cout << std::endl;
 	}
@@ -135,14 +164,23 @@ void printBoard(const std::vector<std::vector<int>>& board,
 	// Last row of cell contents.
 	std::cout << NS;
 	for (int i = 0; i < board.back().size() - 1; i++) {
-		std::cout << board.back()[i];
+		if (board.back()[i]) {
+			std::cout << board.back()[i];
+		} else {
+			std::cout << ' ';
+		}
 		if (roomIds.back()[i] != roomIds.back()[i + 1]) {
 			std::cout << NS;
 		} else {
-			std::cout << " ";
+			std::cout << ' ';
 		}
 	}
-	std::cout << board.back().back() << NS << std::endl;
+	if (board.back().back()) {
+		std::cout << board.back().back();
+	} else {
+		std::cout << ' ';
+	}
+	std::cout << NS << std::endl;
 	
 	// Last row of board symbols.
 	std::cout << NE;
@@ -157,12 +195,4 @@ void printBoard(const std::vector<std::vector<int>>& board,
 	std::cout << EW << NW << std::endl;
 }
 
-void printBoardUgly(const std::vector<std::vector<int>>& board,
-					const std::vector<std::vector<int>>& /* unused */ roomIds) {
-	for (const auto& row : board) {
-		for (int i = 0; i < row.size() - 1; i++) {
-			std::cout << row[i] << " ";
-		}
-		std::cout << row.back() << std::endl;
-	}
-}
+#endif /* UGLY_PRINT_BOARD */
