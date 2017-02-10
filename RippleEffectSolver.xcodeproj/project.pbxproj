@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		5AF3D3431E4D385A008FC4F1 /* RippleEffectSolver */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RippleEffectSolver; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AF3D3461E4D385A008FC4F1 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		5AF3D34D1E4D6A58008FC4F1 /* Puzzle1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Puzzle1.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				5AF3D3461E4D385A008FC4F1 /* main.cpp */,
+				5AF3D34D1E4D6A58008FC4F1 /* Puzzle1.txt */,
 			);
 			path = RippleEffectSolver;
 			sourceTree = "<group>";
