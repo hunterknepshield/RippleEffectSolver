@@ -11,6 +11,9 @@
 
 #include <vector>
 
+#include "typedefs.h"
 
+// Returns the number of cells filled in.
+int fillKnownCellsInRoom(Board* cellValues, const Board& roomIds, int room, const CellList& cellsInRoom, int verbosity);
 
 #endif /* solve_puzzle_hpp */
