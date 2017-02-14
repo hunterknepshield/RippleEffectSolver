@@ -193,5 +193,21 @@ int main(void) {
 		}
 	} while (modifiedBoard);
 	
+	bool completed = true;
+	for (const auto& row : cellValues) {
+		for (const int cellValue : row) {
+			if (!cellValue) {
+				completed = false;
+				goto completionCheck;  // Gasp! Or, "Why doesn't C++ let me name loops with labels and break that way?"
+			}
+		}
+	}
+	completionCheck:
+	if (completed) {
+		// We finished everything.
+		std::cout << "Solved the puzzle. Final state:" << std::endl;
+		printBoard(cellValues, roomIds);
+	}
+	
     return 0;
 }
