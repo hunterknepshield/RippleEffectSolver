@@ -36,26 +36,7 @@ int fillKnownCellsInRoom(Board* board, const Board& roomIds, int room, const Cel
 			}
 		}
 		
-		// The easiest thing to do is complete a room that has only one empty cell. This also covers 1x1 rooms that must therefore contain 1s.
-		if (emptyCells.size() == 1) {
-			auto valueIt = std::find(usedNumber.begin(), usedNumber.end(), false);
-			int value = (int)(valueIt - usedNumber.begin()) + 1;
-			std::tie(r, c) = emptyCells.front();
-			cellValues[r][c] = value;
-			cellsFilled++;
-			switch (VERBOSITY) {
-				case 2:
-					printBoard(cellValues, roomIds);
-				case 1:
-					std::cout << "Filled in a " << value << " at (" << r + 1 << ", " << c + 1 << ") to complete the room." << std::endl;
-				default:
-					break;
-			}
-			// This room is now guaranteed to be done.
-			break;
-		}
-		
-		// If we have more than one empty cell, start looking through their combinations of possibilities.
+		// If we have any empty cells, start looking through their combinations of possibilities.
 		std::vector<int> possibleValues;
 		for (int i = 0; i < usedNumber.size(); i++) {
 			if (!usedNumber[i]) {
