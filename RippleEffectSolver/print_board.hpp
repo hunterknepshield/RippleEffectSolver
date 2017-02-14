@@ -9,8 +9,6 @@
 #ifndef print_board_hpp
 #define print_board_hpp
 
-#include <vector>
-
 #include "typedefs.h"
 
 // A single function that prints the board. If UGLY_PRINT_BOARD is defined in

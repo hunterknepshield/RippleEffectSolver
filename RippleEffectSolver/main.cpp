@@ -15,12 +15,9 @@
 // message and board on action.
 int VERBOSITY = 2;
 
-#include <algorithm>
 #include <iostream>
 #include <map>
 #include <string>
-#include <utility>
-#include <vector>
 
 #include "print_board.hpp"
 #include "read_input.hpp"
@@ -60,10 +57,6 @@ int main(void) {
 	// To get the value of cell (r, c), use cellValues[r][c].
 	// To get the room ID of cell (r, c), use roomIds[r][c].
 
-	if (VERBOSITY) {
-		std::cout << "Inspecting each room in attempt to brute force..."
-				  << std::endl;
-	}
 	// Tracker to watch whether something changed on this iteration or not.
 	// If this is false at the end of the loop, we need to break out and try
 	// something else.

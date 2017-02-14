@@ -9,8 +9,6 @@
 #ifndef solve_puzzle_hpp
 #define solve_puzzle_hpp
 
-#include <vector>
-
 #include "typedefs.h"
 
 // Returns the number of cells filled in.

@@ -9,8 +9,6 @@
 #ifndef read_input_hpp
 #define read_input_hpp
 
-#include <vector>
-
 #include "typedefs.h"
 
 bool readCells(size_t* boardWidth, Board* cellValues);
