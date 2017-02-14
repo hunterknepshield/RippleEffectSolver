@@ -52,7 +52,8 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 			validPossibility = 0;
 			std::tie(r, c) = cell;
 			for (int possibleValue : possibleValues) {
-				if (checkRow(cell, possibleValue, cellValues) && checkColumn(cell, possibleValue, cellValues)) {
+				if (checkRow(cell, possibleValue, cellValues) &&
+					checkColumn(cell, possibleValue, cellValues)) {
 					if (validPossibility) {
 						// Multiple possibilities, so do nothing.
 						validPossibility = 0;
@@ -69,12 +70,17 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 					case 2:
 						printBoard(cellValues, roomIds);
 					case 1:
-						std::cout << "Filled in a " << validPossibility << " at (" << r + 1 << ", " << c + 1 << ") since it's the only possibility." << std::endl;
+						std::cout << "Filled in a " << validPossibility
+							<< " at (" << r + 1 << ", " << c + 1
+							<< ") since it's the only possibility." << std::endl;
 					default:
 						break;
 				}
 				// We've now taken care of this possibility.
-				possibleValues.erase(std::remove(possibleValues.begin(), possibleValues.end(), validPossibility), possibleValues.end());
+				possibleValues.erase(std::remove(possibleValues.begin(),
+												 possibleValues.end(),
+												 validPossibility),
+									 possibleValues.end());
 			}
 		}
 		// We need to remove the cells we just filled in, if any.
@@ -119,7 +125,7 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 								 emptyCells.end());
 			}
 		}
-		// TODO trim possibilities vector if doing more work after this
+		// Note to self: trim possibilities vector if doing more work after this
 	} while (modifiedRoom);
 	return cellsFilled;
 }
