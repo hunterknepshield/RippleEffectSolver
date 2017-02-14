@@ -10,8 +10,8 @@
 
 #include <algorithm>
 #include <iostream>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include "print_board.hpp"
 #include "typedefs.h"
@@ -23,7 +23,8 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 	bool modifiedRoom;
 	do {
 		modifiedRoom = false;
-		// First, we need to figure out which numbers haven't been used and which cells are empty.
+		// First, we need to figure out which numbers haven't been used and
+		// which cells are empty.
 		int r, c;
 		std::vector<bool> usedNumber(cellsInRoom.size(), false);
 		CellList emptyCells;
@@ -35,15 +36,16 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 				emptyCells.push_back(cell);
 			}
 		}
-		
-		// If we have any empty cells, start looking through their combinations of possibilities.
+
+		// If we have any empty cells, start looking through their combinations
+		// of possibilities.
 		std::vector<int> possibleValues;
 		for (int i = 0; i < usedNumber.size(); i++) {
 			if (!usedNumber[i]) {
 				possibleValues.push_back(i + 1);
 			}
 		}
-		
+
 		// Are there any empty cells that have just one possible value?
 		int validPossibility;
 		for (const auto& cell : emptyCells) {
@@ -71,25 +73,27 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 						printBoard(cellValues, roomIds);
 					case 1:
 						std::cout << "Filled in a " << validPossibility
-							<< " at (" << r + 1 << ", " << c + 1
-							<< ") since it's the only possibility." << std::endl;
+								  << " at (" << r + 1 << ", " << c + 1
+								  << ") since it's the only possibility."
+								  << std::endl;
 					default:
 						break;
 				}
 				// We've now taken care of this possibility.
-				possibleValues.erase(std::remove(possibleValues.begin(),
-												 possibleValues.end(),
-												 validPossibility),
-									 possibleValues.end());
+				possibleValues.erase(
+					std::remove(possibleValues.begin(), possibleValues.end(),
+								validPossibility),
+					possibleValues.end());
 			}
 		}
 		// We need to remove the cells we just filled in, if any.
-		emptyCells.erase(std::remove_if(emptyCells.begin(), emptyCells.end(),
-										[&cellValues](const Cell& cell) {
-											return cellValues[cell.first][cell.second] != 0;
-										}),
-						 emptyCells.end());
-		
+		emptyCells.erase(
+			std::remove_if(emptyCells.begin(), emptyCells.end(),
+						   [&cellValues](const Cell& cell) {
+							   return cellValues[cell.first][cell.second] != 0;
+						   }),
+			emptyCells.end());
+
 		// Are there any missing values for this room that fit in only one
 		// cell?
 		for (int possibleValue : possibleValues) {
@@ -114,15 +118,19 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 					case 2:
 						printBoard(cellValues, roomIds);
 					case 1:
-						std::cout << "Filled in a " << possibleValue << " at (" << r + 1 << ", " << c + 1 << ") since it's the only cell that will fit it." << std::endl;
+						std::cout
+							<< "Filled in a " << possibleValue << " at ("
+							<< r + 1 << ", " << c + 1
+							<< ") since it's the only cell that will fit it."
+							<< std::endl;
 					default:
 						break;
 				}
 				// We've now taken care of this cell.
-				emptyCells.erase(std::remove(emptyCells.begin(),
-											 emptyCells.end(),
-											 std::make_pair(r, c)),
-								 emptyCells.end());
+				emptyCells.erase(
+					std::remove(emptyCells.begin(), emptyCells.end(),
+								std::make_pair(r, c)),
+					emptyCells.end());
 			}
 		}
 		// Note to self: trim possibilities vector if doing more work after this

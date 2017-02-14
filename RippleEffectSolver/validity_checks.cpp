@@ -15,7 +15,8 @@
 bool checkRow(const Cell& cell, int value, const Board& cellValues) {
 	// The row must be clear of the same value within `value` spaces.
 	int leftBound = std::max(cell.second - value, 0);
-	int rightBound = std::min(cell.second + value, (int)cellValues[cell.first].size() - 1);
+	int rightBound =
+		std::min(cell.second + value, (int)cellValues[cell.first].size() - 1);
 	for (int c = leftBound; c <= rightBound; c++) {
 		if (cellValues[cell.first][c] == value) {
 			return false;

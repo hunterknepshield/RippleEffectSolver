@@ -31,7 +31,8 @@ std::vector<int> interpretString(const std::string& s) {
 
 bool readCells(size_t* boardWidth, Board* cellValues) {
 	std::string s;
-	// Read in the cell values on the board (0 is unset) until an empty line is reached
+	// Read in the cell values on the board (0 is unset) until an empty line is
+	// reached.
 	do {
 		std::getline(std::cin, s);
 		if (s.empty()) {
@@ -58,7 +59,9 @@ bool readRooms(size_t boardWidth, size_t boardHeight, Board* roomIds) {
 		std::getline(std::cin, s);
 		if (s.empty()) {
 			if (roomIds->size() != boardHeight) {
-				std::cerr << "Failed to specify room IDs for all cells. Terminating." << std::endl;
+				std::cerr
+					<< "Failed to specify room IDs for all cells. Terminating."
+					<< std::endl;
 				return false;
 			}
 			return true;

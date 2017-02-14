@@ -35,12 +35,12 @@ int main(void) {
 		!readRooms(boardWidth, cellValues.size(), &roomIds)) {
 		return 1;
 	}
-	
+
 	if (VERBOSITY) {
 		std::cout << "Initial board state:" << std::endl;
 		printBoard(cellValues, roomIds);
 	}
-	
+
 	// Now some initial setup...
 	// Maps room ID to a list of pairs of cell coordinates in the room.
 	std::map<int, CellList> cellsInRoom;
@@ -48,8 +48,8 @@ int main(void) {
 	std::map<int, int> cellsCompletedInRoom;
 	for (int r = 0; r < roomIds.size(); r++) {
 		for (int c = 0; c < roomIds[r].size(); c++) {
-			// TODO enforce contiguous rooms here? May also want to validate givens.
-			// For now assuming valid input.
+			// TODO enforce contiguous rooms here? May also want to validate
+			// givens. For now assuming valid input.
 			cellsInRoom[roomIds[r][c]].push_back({r, c});
 			if (cellValues[r][c]) {
 				cellsCompletedInRoom[roomIds[r][c]]++;
@@ -59,9 +59,10 @@ int main(void) {
 	// To get the size of room n, use cellsInRoom[n].size().
 	// To get the value of cell (r, c), use cellValues[r][c].
 	// To get the room ID of cell (r, c), use roomIds[r][c].
-	
+
 	if (VERBOSITY) {
-		std::cout << "Inspecting each room in attempt to brute force..." << std::endl;
+		std::cout << "Inspecting each room in attempt to brute force..."
+				  << std::endl;
 	}
 	// Tracker to watch whether something changed on this iteration or not.
 	// If this is false at the end of the loop, we need to break out and try
@@ -70,22 +71,25 @@ int main(void) {
 	do {
 		modifiedBoard = false;
 		for (const auto& roomAndCells : cellsInRoom) {
-			if (cellsCompletedInRoom[roomAndCells.first] == roomAndCells.second.size()) {
+			if (cellsCompletedInRoom[roomAndCells.first] ==
+				roomAndCells.second.size()) {
 				// This room is already complete, don't waste time here.
 				continue;
 			}
-			int cellsFilled = fillKnownCellsInRoom(cellValues, roomIds, roomAndCells.first,
-												   roomAndCells.second, VERBOSITY);
+			int cellsFilled =
+				fillKnownCellsInRoom(cellValues, roomIds, roomAndCells.first,
+									 roomAndCells.second, VERBOSITY);
 			cellsCompletedInRoom[roomAndCells.first] += cellsFilled;
 			if (cellsFilled > 0) {
 				modifiedBoard = true;
 			}
 		}
 	} while (modifiedBoard);
-	
+
 	bool completed = true;
 	for (const auto& roomAndCells : cellsInRoom) {
-		if (cellsCompletedInRoom[roomAndCells.first] != roomAndCells.second.size()) {
+		if (cellsCompletedInRoom[roomAndCells.first] !=
+			roomAndCells.second.size()) {
 			completed = false;
 			break;
 		}
@@ -95,6 +99,6 @@ int main(void) {
 		std::cout << "Solved the puzzle. Final state:" << std::endl;
 		printBoard(cellValues, roomIds);
 	}
-	
-    return 0;
+
+	return 0;
 }

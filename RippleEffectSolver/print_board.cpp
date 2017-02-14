@@ -47,8 +47,7 @@ void printBoard(const Board& cellValues, const Board& /* unused */ roomIds) {
 // The pretty version of the board printing routine. Uses special Unicode
 // characters to show room borders in addition to the cells' values. However,
 // these characters don't play nice with all fonts.
-void printBoard(const Board& cellValues,
-				const Board& roomIds) {
+void printBoard(const Board& cellValues, const Board& roomIds) {
 	// Top row of board symbols.
 	std::cout << SE;
 	for (int c = 0; c < cellValues[0].size() - 1; c++) {
@@ -60,7 +59,7 @@ void printBoard(const Board& cellValues,
 		}
 	}
 	std::cout << EW << SW << std::endl;
-	
+
 	// Interior rows of cell values and board symbols.
 	for (int r = 0; r < cellValues.size() - 1; r++) {
 		// Row of cell contents.
@@ -83,7 +82,7 @@ void printBoard(const Board& cellValues,
 			std::cout << ' ';
 		}
 		std::cout << NS << std::endl;
-		
+
 		// Row of board symbols.
 		if (roomIds[r][0] != roomIds[r + 1][0]) {
 			std::cout << NSE;
@@ -96,7 +95,7 @@ void printBoard(const Board& cellValues,
 			} else {
 				std::cout << ' ';
 			}
-			
+
 			// Space between four cells. Could be any of the special characters.
 			// No particularly easy way to do this.
 			std::bitset<4> space;  // Empty for now
@@ -150,7 +149,8 @@ void printBoard(const Board& cellValues,
 					std::cout << NSEW;
 					break;
 				default:
-					std::cerr << "Invalid value for calculating square of 4: " << space << std::endl;
+					std::cerr << "Invalid value for calculating square of 4: "
+							  << space << std::endl;
 					std::cout << "?";
 			}
 		}
@@ -161,7 +161,7 @@ void printBoard(const Board& cellValues,
 		}
 		std::cout << std::endl;
 	}
-	
+
 	// Last row of cell contents.
 	std::cout << NS;
 	for (int c = 0; c < cellValues.back().size() - 1; c++) {
@@ -182,7 +182,7 @@ void printBoard(const Board& cellValues,
 		std::cout << ' ';
 	}
 	std::cout << NS << std::endl;
-	
+
 	// Last row of board symbols.
 	std::cout << NE;
 	for (int c = 0; c < cellValues.back().size() - 1; c++) {
