@@ -74,7 +74,8 @@ int main(void) {
 				// This room is already complete, don't waste time here.
 				continue;
 			}
-			int cellsFilled = fillKnownCellsInRoom(&cellValues, roomIds, roomAndCells.first, roomAndCells.second, VERBOSITY);
+			int cellsFilled = fillKnownCellsInRoom(cellValues, roomIds, roomAndCells.first,
+												   roomAndCells.second, VERBOSITY);
 			cellsCompletedInRoom[roomAndCells.first] += cellsFilled;
 			if (cellsFilled > 0) {
 				modifiedBoard = true;

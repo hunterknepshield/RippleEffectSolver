@@ -17,8 +17,8 @@
 #include "typedefs.h"
 #include "validity_checks.hpp"
 
-int fillKnownCellsInRoom(Board* board, const Board& roomIds, int room, const CellList& cellsInRoom, int VERBOSITY) {
-	Board& cellValues = *board;
+int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
+						 const CellList& cellsInRoom, int VERBOSITY) {
 	int cellsFilled = 0;
 	bool modifiedRoom;
 	do {
