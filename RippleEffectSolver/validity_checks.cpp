@@ -9,14 +9,10 @@
 #include "validity_checks.hpp"
 
 #include <algorithm>
-#include <map>
-#include <utility>
-#include <vector>
 
 #include "typedefs.h"
 
-bool checkRow(const Cell& cell, int value,
-			  const Board& cellValues) {
+bool checkRow(const Cell& cell, int value, const Board& cellValues) {
 	// The row must be clear of the same value within `value` spaces.
 	int leftBound = std::max(cell.second - value, 0);
 	int rightBound = std::min(cell.second + value, (int)cellValues[cell.first].size() - 1);
@@ -28,8 +24,7 @@ bool checkRow(const Cell& cell, int value,
 	return true;
 }
 
-bool checkColumn(const Cell& cell, int value,
-				 const Board& cellValues) {
+bool checkColumn(const Cell& cell, int value, const Board& cellValues) {
 	// The column must be clear of the same value within `value` spaces.
 	int lowerBound = std::max(cell.first - value, 0);
 	int upperBound = std::min(cell.first + value, (int)cellValues.size() - 1);
@@ -41,11 +36,9 @@ bool checkColumn(const Cell& cell, int value,
 	return true;
 }
 
-bool checkRoom(const Cell& cell, int value, const Board& cellValues,
-			   const Board& roomIds, const std::map<int, CellList>& cellsInRoom) {
+bool checkRoom(const CellList& cells, int value, const Board& cellValues) {
 	// The room must be clear of the same value.
-	int roomId = roomIds[cell.first][cell.second];
-	for (const auto& roomCell : cellsInRoom.at(roomId)) {
+	for (const auto& roomCell : cells) {
 		if (cellValues[roomCell.first][roomCell.second] == value) {
 			return false;
 		}
