@@ -11,10 +11,11 @@
 
 #include <vector>
 
+#include "typedefs.h"
+
 // A single function that prints the board. If UGLY_PRINT_BOARD is defined in
 // main.cpp, only the raw numbers are printed. Otherwise, room borders are
 // printed using special Unicode grid printing characters.
-void printBoard(const std::vector<std::vector<int>>& board,
-				const std::vector<std::vector<int>>& roomIds);
+void printBoard(const Board& cellValues, const Board& roomIds);
 
 #endif /* print_board_hpp */

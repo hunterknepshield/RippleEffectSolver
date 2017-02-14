@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A6B233E1E51661800B82DBE /* solve_puzzle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B233C1E51661800B82DBE /* solve_puzzle.cpp */; };
 		5A89816D1E4DB24B0093AE21 /* validity_checks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A89816B1E4DB24B0093AE21 /* validity_checks.cpp */; };
 		5AF3D3471E4D385A008FC4F1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D3461E4D385A008FC4F1 /* main.cpp */; };
 		5AF3D3501E4D7817008FC4F1 /* print_board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D34E1E4D7817008FC4F1 /* print_board.cpp */; };
@@ -26,6 +27,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5A6B233C1E51661800B82DBE /* solve_puzzle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = solve_puzzle.cpp; sourceTree = "<group>"; };
+		5A6B233D1E51661800B82DBE /* solve_puzzle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = solve_puzzle.hpp; sourceTree = "<group>"; };
+		5A6B233F1E51664400B82DBE /* typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = typedefs.h; sourceTree = "<group>"; };
 		5A89816B1E4DB24B0093AE21 /* validity_checks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = validity_checks.cpp; sourceTree = "<group>"; };
 		5A89816C1E4DB24B0093AE21 /* validity_checks.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = validity_checks.hpp; sourceTree = "<group>"; };
 		5AF3D3431E4D385A008FC4F1 /* RippleEffectSolver */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RippleEffectSolver; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,6 +82,9 @@
 				5AF3D34F1E4D7817008FC4F1 /* print_board.hpp */,
 				5AF3D3531E4D833E008FC4F1 /* read_input.cpp */,
 				5AF3D3541E4D833E008FC4F1 /* read_input.hpp */,
+				5A6B233C1E51661800B82DBE /* solve_puzzle.cpp */,
+				5A6B233D1E51661800B82DBE /* solve_puzzle.hpp */,
+				5A6B233F1E51664400B82DBE /* typedefs.h */,
 				5A89816B1E4DB24B0093AE21 /* validity_checks.cpp */,
 				5A89816C1E4DB24B0093AE21 /* validity_checks.hpp */,
 			);
@@ -156,6 +163,7 @@
 			files = (
 				5AF3D3501E4D7817008FC4F1 /* print_board.cpp in Sources */,
 				5AF3D3551E4D833E008FC4F1 /* read_input.cpp in Sources */,
+				5A6B233E1E51661800B82DBE /* solve_puzzle.cpp in Sources */,
 				5A89816D1E4DB24B0093AE21 /* validity_checks.cpp in Sources */,
 				5AF3D3471E4D385A008FC4F1 /* main.cpp in Sources */,
 			);

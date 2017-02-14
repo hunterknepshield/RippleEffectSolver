@@ -12,13 +12,14 @@
 #include <iostream>
 #include <vector>
 
+#include "typedefs.h"
+
 #ifdef UGLY_PRINT_BOARD
 
 // The ugly, simple version of the printing routine. Doesn't show room borders,
 // just cells' values.
-void printBoard(const std::vector<std::vector<int>>& board,
-				const std::vector<std::vector<int>>& /* unused */ roomIds) {
-	for (const auto& row : board) {
+void printBoard(const Board& cellValues, const Board& /* unused */ roomIds) {
+	for (const auto& row : cellValues) {
 		for (int c = 0; c < row.size() - 1; c++) {
 			std::cout << row[c] << ' ';
 		}
@@ -46,11 +47,11 @@ void printBoard(const std::vector<std::vector<int>>& board,
 // The pretty version of the board printing routine. Uses special Unicode
 // characters to show room borders in addition to the cells' values. However,
 // these characters don't play nice with all fonts.
-void printBoard(const std::vector<std::vector<int>>& board,
-				const std::vector<std::vector<int>>& roomIds) {
+void printBoard(const Board& cellValues,
+				const Board& roomIds) {
 	// Top row of board symbols.
 	std::cout << SE;
-	for (int c = 0; c < board[0].size() - 1; c++) {
+	for (int c = 0; c < cellValues[0].size() - 1; c++) {
 		std::cout << EW;
 		if (roomIds[0][c] != roomIds[0][c + 1]) {
 			std::cout << SEW;
@@ -61,12 +62,12 @@ void printBoard(const std::vector<std::vector<int>>& board,
 	std::cout << EW << SW << std::endl;
 	
 	// Interior rows of cell values and board symbols.
-	for (int r = 0; r < board.size() - 1; r++) {
+	for (int r = 0; r < cellValues.size() - 1; r++) {
 		// Row of cell contents.
 		std::cout << NS;
-		for (int c = 0; c < board[r].size() - 1; c++) {
-			if (board[r][c]) {
-				std::cout << board[r][c];
+		for (int c = 0; c < cellValues[r].size() - 1; c++) {
+			if (cellValues[r][c]) {
+				std::cout << cellValues[r][c];
 			} else {
 				std::cout << ' ';
 			}
@@ -76,8 +77,8 @@ void printBoard(const std::vector<std::vector<int>>& board,
 				std::cout << ' ';
 			}
 		}
-		if (board[r].back()) {
-			std::cout << board[r].back();
+		if (cellValues[r].back()) {
+			std::cout << cellValues[r].back();
 		} else {
 			std::cout << ' ';
 		}
@@ -89,7 +90,7 @@ void printBoard(const std::vector<std::vector<int>>& board,
 		} else {
 			std::cout << NS;
 		}
-		for (int c = 0; c < board[r].size() - 1; c++) {
+		for (int c = 0; c < cellValues[r].size() - 1; c++) {
 			if (roomIds[r][c] != roomIds[r + 1][c]) {
 				std::cout << EW;
 			} else {
@@ -163,9 +164,9 @@ void printBoard(const std::vector<std::vector<int>>& board,
 	
 	// Last row of cell contents.
 	std::cout << NS;
-	for (int c = 0; c < board.back().size() - 1; c++) {
-		if (board.back()[c]) {
-			std::cout << board.back()[c];
+	for (int c = 0; c < cellValues.back().size() - 1; c++) {
+		if (cellValues.back()[c]) {
+			std::cout << cellValues.back()[c];
 		} else {
 			std::cout << ' ';
 		}
@@ -175,8 +176,8 @@ void printBoard(const std::vector<std::vector<int>>& board,
 			std::cout << ' ';
 		}
 	}
-	if (board.back().back()) {
-		std::cout << board.back().back();
+	if (cellValues.back().back()) {
+		std::cout << cellValues.back().back();
 	} else {
 		std::cout << ' ';
 	}
@@ -184,7 +185,7 @@ void printBoard(const std::vector<std::vector<int>>& board,
 	
 	// Last row of board symbols.
 	std::cout << NE;
-	for (int c = 0; c < board.back().size() - 1; c++) {
+	for (int c = 0; c < cellValues.back().size() - 1; c++) {
 		std::cout << EW;
 		if (roomIds.back()[c] != roomIds.back()[c + 1]) {
 			std::cout << NEW;

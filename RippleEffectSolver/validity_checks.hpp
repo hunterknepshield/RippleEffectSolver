@@ -10,21 +10,17 @@
 #define validity_checks_hpp
 
 #include <map>
-#include <utility>
-#include <vector>
+
+#include "typedefs.h"
 
 // Returns true if the value is a valid placement in the cell for the row.
-bool checkRow(const std::pair<int, int>& cell, int value,
-			  const std::vector<std::vector<int>>& board);
+bool checkRow(const Cell& cell, int value, const Board& cellValues);
 
 // Returns true if the value is a valid placement in the cell for the column.
-bool checkColumn(const std::pair<int, int>& cell, int value,
-				 const std::vector<std::vector<int>>& board);
+bool checkColumn(const Cell& cell, int value, const Board& cellValues);
 
 // Returns true if the value is a valid placement in the cell for the room.
-bool checkRoom(const std::pair<int, int>& cell, int value,
-			   const std::vector<std::vector<int>>& board,
-			   const std::vector<std::vector<int>>& roomIds,
-			   const std::map<int, std::vector<std::pair<int, int>>>& cellsInRoom);
+bool checkRoom(const Cell& cell, int value, const Board& cellValues,
+			   const Board& roomIds, const std::map<int, CellList>& cellsInRoom);
 
 #endif /* validity_checks_hpp */

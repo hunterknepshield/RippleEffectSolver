@@ -11,8 +11,10 @@
 
 #include <vector>
 
-bool readCells(size_t* boardWidth, std::vector<std::vector<int>>* board);
+#include "typedefs.h"
 
-bool readRooms(size_t boardWidth, size_t boardHeight, std::vector<std::vector<int>>* roomIds);
+bool readCells(size_t* boardWidth, Board* cellValues);
+
+bool readRooms(size_t boardWidth, size_t boardHeight, Board* roomIds);
 
 #endif /* read_input_hpp */

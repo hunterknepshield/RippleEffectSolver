@@ -13,6 +13,8 @@
 #include <string>
 #include <vector>
 
+#include "typedefs.h"
+
 std::vector<int> interpretString(const std::string& s) {
 	std::vector<int> v;
 	std::stringstream stream(s);
@@ -27,30 +29,30 @@ std::vector<int> interpretString(const std::string& s) {
 	return v;
 }
 
-bool readCells(size_t* boardWidth, std::vector<std::vector<int>>* board) {
+bool readCells(size_t* boardWidth, Board* cellValues) {
 	std::string s;
 	// Read in the cell values on the board (0 is unset) until an empty line is reached
 	do {
 		std::getline(std::cin, s);
 		if (s.empty()) {
-			if (board->empty()) {
+			if (cellValues->empty()) {
 				std::cerr << "Board cannot be empty.";
 				continue;
 			}
 			return true;
 		}
-		const std::vector<int>& cellValues = interpretString(s);
+		const std::vector<int>& rowValues = interpretString(s);
 		if (*boardWidth == 0) {
-			*boardWidth = cellValues.size();
-		} else if (*boardWidth != cellValues.size()) {
+			*boardWidth = rowValues.size();
+		} else if (*boardWidth != rowValues.size()) {
 			std::cerr << "Inconsistent line size. Terminating." << std::endl;
 			return false;
 		}
-		board->push_back(cellValues);
+		cellValues->push_back(rowValues);
 	} while (true);
 }
 
-bool readRooms(size_t boardWidth, size_t boardHeight, std::vector<std::vector<int>>* roomIds) {
+bool readRooms(size_t boardWidth, size_t boardHeight, Board* roomIds) {
 	std::string s;
 	do {
 		std::getline(std::cin, s);

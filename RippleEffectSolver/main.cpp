@@ -24,24 +24,25 @@ int VERBOSITY = 2;
 
 #include "print_board.hpp"
 #include "read_input.hpp"
+#include "typedefs.h"
 #include "validity_checks.hpp"
 
 int main(void) {
 	size_t boardWidth = 0;
-	std::vector<std::vector<int>> board, roomIds;
-	if (!readCells(&boardWidth, &board) ||
-		!readRooms(boardWidth, board.size(), &roomIds)) {
+	Board cellValues, roomIds;
+	if (!readCells(&boardWidth, &cellValues) ||
+		!readRooms(boardWidth, cellValues.size(), &roomIds)) {
 		return 1;
 	}
 	
 	if (VERBOSITY) {
 		std::cout << "Initial board state:" << std::endl;
-		printBoard(board, roomIds);
+		printBoard(cellValues, roomIds);
 	}
 	
 	// Now some initial setup...
 	// Maps room ID to a list of pairs of cell coordinates in the room.
-	std::map<int, std::vector<std::pair<int, int>>> cellsInRoom;
+	std::map<int, CellList> cellsInRoom;
 	// Maps room ID to the number of cells completed in the room.
 	std::map<int, int> cellsCompletedInRoom;
 	for (int r = 0; r < roomIds.size(); r++) {
@@ -49,13 +50,13 @@ int main(void) {
 			// TODO enforce contiguous rooms here? May also want to validate givens.
 			// For now assuming valid input.
 			cellsInRoom[roomIds[r][c]].push_back({r, c});
-			if (board[r][c]) {
+			if (cellValues[r][c]) {
 				cellsCompletedInRoom[roomIds[r][c]]++;
 			}
 		}
 	}
 	// To get the size of room n, use cellsInRoom[n].size().
-	// To get the value of cell (r, c), use board[r][c].
+	// To get the value of cell (r, c), use cellValues[r][c].
 	// To get the room ID of cell (r, c), use roomIds[r][c].
 	
 	if (VERBOSITY) {
@@ -74,11 +75,11 @@ int main(void) {
 			}
 			int r, c;
 			std::vector<bool> completedNumbers(roomAndCells.second.size(), false);
-			std::vector<std::pair<int, int>> emptyCells;
+			CellList emptyCells;
 			for (const auto& cell : roomAndCells.second) {
 				std::tie(r, c) = cell;
-				if (board[r][c]) {
-					completedNumbers[board[r][c] - 1] = true;
+				if (cellValues[r][c]) {
+					completedNumbers[cellValues[r][c] - 1] = true;
 				} else {
 					emptyCells.push_back(cell);
 				}
@@ -89,12 +90,12 @@ int main(void) {
 				auto valueIt = std::find(completedNumbers.begin(), completedNumbers.end(), false);
 				int value = (int)(valueIt - completedNumbers.begin()) + 1;
 				std::tie(r, c) = emptyCells.front();
-				board[r][c] = value;
+				cellValues[r][c] = value;
 				cellsCompletedInRoom[roomIds[r][c]]++;
 				modifiedBoard = true;
 				switch (VERBOSITY) {
 					case 2:
-						printBoard(board, roomIds);
+						printBoard(cellValues, roomIds);
 					case 1:
 						std::cout << "Filled in a " << value << " at (" << r + 1 << ", " << c + 1 << ") to complete the room." << std::endl;
 					default:
@@ -122,7 +123,7 @@ int main(void) {
 				validPossibility = 0;
 				std::tie(r, c) = cell;
 				for (int possibility : possibilities) {
-					if (checkRow(cell, possibility, board) && checkColumn(cell, possibility, board)) {
+					if (checkRow(cell, possibility, cellValues) && checkColumn(cell, possibility, cellValues)) {
 						if (validPossibility) {
 							// Multiple possibilities, so do nothing.
 							validPossibility = 0;
@@ -132,12 +133,12 @@ int main(void) {
 					}
 				}
 				if (validPossibility) {
-					board[r][c] = validPossibility;
+					cellValues[r][c] = validPossibility;
 					cellsCompletedInRoom[roomIds[r][c]]++;
 					modifiedBoard = true;
 					switch (VERBOSITY) {
 						case 2:
-							printBoard(board, roomIds);
+							printBoard(cellValues, roomIds);
 						case 1:
 							std::cout << "Filled in a " << validPossibility << " at (" << r + 1 << ", " << c + 1 << ") since it's the only possibility." << std::endl;
 						default:
@@ -149,8 +150,8 @@ int main(void) {
 			}
 			// We need to remove the cells we just filled in, if any.
 			emptyCells.erase(std::remove_if(emptyCells.begin(), emptyCells.end(),
-											[&board](const std::pair<int, int>& cell) {
-												return board[cell.first][cell.second] != 0;
+											[&cellValues](const Cell& cell) {
+												return cellValues[cell.first][cell.second] != 0;
 											}),
 							 emptyCells.end());
 			// Are there any missing values for this room that fit in only one
@@ -159,7 +160,8 @@ int main(void) {
 				r = -1;
 				c = -1;
 				for (const auto& cell : emptyCells) {
-					if (checkRow(cell, possibility, board) && checkColumn(cell, possibility, board)) {
+					if (checkRow(cell, possibility, cellValues) &&
+						checkColumn(cell, possibility, cellValues)) {
 						if (r != -1) {
 							// Multiple possibilities, so do nothing.
 							r = -1;
@@ -169,19 +171,22 @@ int main(void) {
 					}
 				}
 				if (r != -1) {
-					board[r][c] = possibility;
+					cellValues[r][c] = possibility;
 					cellsCompletedInRoom[roomIds[r][c]]++;
 					modifiedBoard = true;
 					switch (VERBOSITY) {
 						case 2:
-							printBoard(board, roomIds);
+							printBoard(cellValues, roomIds);
 						case 1:
 							std::cout << "Filled in a " << possibility << " at (" << r + 1 << ", " << c + 1 << ") since it's the only cell that will fit it." << std::endl;
 						default:
 							break;
 					}
 					// We've now taken care of this cell.
-					emptyCells.erase(std::remove(emptyCells.begin(), emptyCells.end(), std::make_pair(r, c)), emptyCells.end());
+					emptyCells.erase(std::remove(emptyCells.begin(),
+												 emptyCells.end(),
+												 std::make_pair(r, c)),
+									 emptyCells.end());
 				}
 			}
 			// TODO trim possibilities vector if doing more work after this
