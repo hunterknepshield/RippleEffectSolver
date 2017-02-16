@@ -11,7 +11,7 @@
 
 #include "typedefs.h"
 
-// A single function that prints the board. If UGLY_PRINT_BOARD is defined in
+// A single function that prints the board. If SIMPLE_PRINT_BOARD is defined in
 // main.cpp, only the raw numbers are printed. Otherwise, room borders are
 // printed using special Unicode grid printing characters.
 void printBoard(const Board& cellValues, const Board& roomIds);

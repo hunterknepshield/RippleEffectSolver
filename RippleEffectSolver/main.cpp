@@ -9,7 +9,7 @@
 // If your console or font doesn't play nice with the pretty board symbols,
 // uncomment this #define and it will print only numbers. The caveat is that it
 // then won't print any sort of room borders.
-// #define UGLY_PRINT_BOARD
+// #define SIMPLE_PRINT_BOARD
 
 // Verbosity settings. 0 = silent, 1 = print message on action, 2 = print
 // message and board on action.

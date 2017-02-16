@@ -14,7 +14,7 @@
 
 #include "typedefs.h"
 
-#ifdef UGLY_PRINT_BOARD
+#ifdef SIMPLE_PRINT_BOARD
 
 // The ugly, simple version of the printing routine. Doesn't show room borders,
 // just cells' values.
@@ -27,7 +27,7 @@ void printBoard(const Board& cellValues, const Board& /* unused */ roomIds) {
 	}
 }
 
-#else /* !UGLY_PRINT_BOARD */
+#else /* !SIMPLE_PRINT_BOARD */
 
 // String constants for easy usage. N > S > E > W in names.
 // Also #define'd away since they need the weird scary string types because
@@ -196,4 +196,4 @@ void printBoard(const Board& cellValues, const Board& roomIds) {
 	std::cout << EW << NW << std::endl;
 }
 
-#endif /* UGLY_PRINT_BOARD */
+#endif /* SIMPLE_PRINT_BOARD */
