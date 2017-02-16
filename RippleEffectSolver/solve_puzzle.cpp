@@ -46,27 +46,15 @@ std::pair<bool, Board> findSingleSolution(
 	} while (modifiedBoard);
 
 	// At this point, we're either done the puzzle or need to branch.
-
-	// TODO abstract away validity check
-	// if (validateCompletedBoard(board, roomIds)) { ... }
-	bool completed = true;
-	for (const auto& roomAndCells : cellsInRoom) {
-		if (cellsCompletedInRoom[roomAndCells.first] !=
-			roomAndCells.second.size()) {
-			completed = false;
-			break;
-		}
-	}
-	if (completed) {
+	if (validateCompletedBoard(cellValues, roomIds, cellsInRoom)) {
 		return {true, cellValues};
 	}
-
 	// Now, we need to make a choice. Find the first empty cell and fill it with
 	// its first possibility, then recurse. If that returns a valid solution,
-	// return that. Otherwise, try the next value.
+	// return that. Otherwise, try the next value until one is found or all are
+	// exhausted.
 	switch (VERBOSITY) {
 		case 2:
-			printBoard(cellValues, roomIds);
 		case 1:
 			std::cout << "Unable to fill in any more cells with certainty. "
 						 "Beginning to branch."
