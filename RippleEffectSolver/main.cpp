@@ -57,40 +57,13 @@ int main(void) {
 	// To get the value of cell (r, c), use cellValues[r][c].
 	// To get the room ID of cell (r, c), use roomIds[r][c].
 
-	// Tracker to watch whether something changed on this iteration or not.
-	// If this is false at the end of the loop, we need to break out and try
-	// something else.
-	bool modifiedBoard;
-	do {
-		modifiedBoard = false;
-		for (const auto& roomAndCells : cellsInRoom) {
-			if (cellsCompletedInRoom[roomAndCells.first] ==
-				roomAndCells.second.size()) {
-				// This room is already complete, don't waste time here.
-				continue;
-			}
-			int cellsFilled =
-				fillKnownCellsInRoom(cellValues, roomIds, roomAndCells.first,
-									 roomAndCells.second, VERBOSITY);
-			cellsCompletedInRoom[roomAndCells.first] += cellsFilled;
-			if (cellsFilled > 0) {
-				modifiedBoard = true;
-			}
-		}
-	} while (modifiedBoard);
-
-	bool completed = true;
-	for (const auto& roomAndCells : cellsInRoom) {
-		if (cellsCompletedInRoom[roomAndCells.first] !=
-			roomAndCells.second.size()) {
-			completed = false;
-			break;
-		}
-	}
-	if (completed) {
-		// We finished everything.
+	const auto& solvedWithBoard = findSingleSolution(
+		cellValues, roomIds, cellsInRoom, cellsCompletedInRoom, VERBOSITY);
+	if (solvedWithBoard.first) {
 		std::cout << "Solved the puzzle. Final state:" << std::endl;
-		printBoard(cellValues, roomIds);
+		printBoard(solvedWithBoard.second, roomIds);
+	} else {
+		std::cout << "No solution." << std::endl;
 	}
 
 	return 0;

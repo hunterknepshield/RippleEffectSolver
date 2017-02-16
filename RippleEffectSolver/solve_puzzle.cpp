@@ -10,12 +10,59 @@
 
 #include <algorithm>
 #include <iostream>
+#include <map>
 #include <utility>
 #include <vector>
 
 #include "print_board.hpp"
 #include "typedefs.h"
 #include "validity_checks.hpp"
+
+std::pair<bool, Board> findSingleSolution(
+	Board /* intentional copy */ cellValues, const Board& roomIds,
+	const std::map<int, CellList>& cellsInRoom,
+	std::map<int, int> /* intentional copy */ cellsCompletedInRoom,
+	int VERBOSITY) {
+	// Tracker to watch whether something changed on this iteration or not.
+	// If this is false at the end of the loop, we need to break out and try
+	// something else.
+	bool modifiedBoard;
+	do {
+		modifiedBoard = false;
+		for (const auto& roomAndCells : cellsInRoom) {
+			if (cellsCompletedInRoom[roomAndCells.first] ==
+				roomAndCells.second.size()) {
+				// This room is already complete, don't waste time here.
+				continue;
+			}
+			int cellsFilled =
+				fillKnownCellsInRoom(cellValues, roomIds, roomAndCells.first,
+									 roomAndCells.second, VERBOSITY);
+			cellsCompletedInRoom[roomAndCells.first] += cellsFilled;
+			if (cellsFilled > 0) {
+				modifiedBoard = true;
+			}
+		}
+	} while (modifiedBoard);
+
+	// At this point, we're either done the puzzle or need to branch.
+
+	// TODO abstract away validity check
+	// if (validateCompletedBoard(board, roomIds)) { ... }
+	bool completed = true;
+	for (const auto& roomAndCells : cellsInRoom) {
+		if (cellsCompletedInRoom[roomAndCells.first] !=
+			roomAndCells.second.size()) {
+			completed = false;
+			break;
+		}
+	}
+	if (completed) {
+		return {true, cellValues};
+	}
+
+	return {false, {}};
+}
 
 int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 						 const CellList& cellsInRoom, int VERBOSITY) {
@@ -72,10 +119,11 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 					case 2:
 						printBoard(cellValues, roomIds);
 					case 1:
-						std::cout << "Filled in a " << validPossibility
-								  << " at (" << r + 1 << ", " << c + 1
-								  << ") since it's the only possibility."
-								  << std::endl;
+						std::cout
+							<< "Filled in a " << validPossibility << " at ("
+							<< r + 1 << ", " << c + 1
+							<< ") since it's the only possibility for the cell."
+							<< std::endl;
 					default:
 						break;
 				}
