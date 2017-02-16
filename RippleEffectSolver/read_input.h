@@ -1,13 +1,13 @@
 //
-//  read_input.hpp
+//  read_input.h
 //  RippleEffectSolver
 //
 //  Created by Hunter Knepshield on 2/10/17.
 //  Copyright © 2017 Hunter Knepshield. All rights reserved.
 //
 
-#ifndef read_input_hpp
-#define read_input_hpp
+#ifndef read_input_h
+#define read_input_h
 
 #include "typedefs.h"
 
@@ -20,4 +20,4 @@ bool readCells(size_t* boardWidth, Board* cellValues);
 // same footprint as the board from readCells.
 bool readRooms(size_t boardWidth, size_t boardHeight, Board* roomIds);
 
-#endif /* read_input_hpp */
+#endif /* read_input_h */

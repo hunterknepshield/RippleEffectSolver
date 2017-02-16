@@ -1,12 +1,12 @@
 //
-//  validity_checks.cpp
+//  validity_checks.cc
 //  RippleEffectSolver
 //
 //  Created by Hunter Knepshield on 2/10/17.
 //  Copyright © 2017 Hunter Knepshield. All rights reserved.
 //
 
-#include "validity_checks.hpp"
+#include "validity_checks.h"
 
 #include <algorithm>
 

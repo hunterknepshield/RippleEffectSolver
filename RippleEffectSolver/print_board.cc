@@ -1,12 +1,12 @@
 //
-//  print_board.cpp
+//  print_board.cc
 //  RippleEffectSolver
 //
 //  Created by Hunter Knepshield on 2/9/17.
 //  Copyright © 2017 Hunter Knepshield. All rights reserved.
 //
 
-#include "print_board.hpp"
+#include "print_board.h"
 
 #include <bitset>
 #include <iostream>

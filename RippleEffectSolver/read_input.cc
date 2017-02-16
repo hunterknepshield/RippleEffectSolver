@@ -1,12 +1,12 @@
 //
-//  read_input.cpp
+//  read_input.cc
 //  RippleEffectSolver
 //
 //  Created by Hunter Knepshield on 2/10/17.
 //  Copyright © 2017 Hunter Knepshield. All rights reserved.
 //
 
-#include "read_input.hpp"
+#include "read_input.h"
 
 #include <iostream>
 #include <sstream>

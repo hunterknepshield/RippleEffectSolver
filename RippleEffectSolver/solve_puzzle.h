@@ -1,13 +1,13 @@
 //
-//  solve_puzzle.hpp
+//  solve_puzzle.h
 //  RippleEffectSolver
 //
 //  Created by Hunter Knepshield on 2/12/17.
 //  Copyright © 2017 Hunter Knepshield. All rights reserved.
 //
 
-#ifndef solve_puzzle_hpp
-#define solve_puzzle_hpp
+#ifndef solve_puzzle_h
+#define solve_puzzle_h
 
 #include <map>
 #include <set>
@@ -45,4 +45,4 @@ void fillKnownCellsInBoard(Board& cellValues, const Board& roomIds,
 						   std::map<int, int>& cellsCompletedInRoom,
 						   int verbosity);
 
-#endif /* solve_puzzle_hpp */
+#endif /* solve_puzzle_h */

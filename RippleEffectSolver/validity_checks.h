@@ -1,13 +1,13 @@
 //
-//  validity_checks.hpp
+//  validity_checks.h
 //  RippleEffectSolver
 //
 //  Created by Hunter Knepshield on 2/10/17.
 //  Copyright © 2017 Hunter Knepshield. All rights reserved.
 //
 
-#ifndef validity_checks_hpp
-#define validity_checks_hpp
+#ifndef validity_checks_h
+#define validity_checks_h
 
 #include "typedefs.h"
 
@@ -26,4 +26,4 @@ bool checkRoom(const Cell& cell, const CellList& cells, int value,
 bool validateCompletedBoard(const Board& cellValues, const Board& roomIds,
 							const RoomMap& roomMap);
 
-#endif /* validity_checks_hpp */
+#endif /* validity_checks_h */

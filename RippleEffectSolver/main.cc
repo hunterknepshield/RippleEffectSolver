@@ -1,5 +1,5 @@
 //
-//  main.cpp
+//  main.cc
 //  RippleEffectSolver
 //
 //  Created by Hunter Knepshield on 2/9/17.
@@ -23,11 +23,11 @@ bool FIND_ALL_SOLUTIONS = true;
 #include <map>
 #include <string>
 
-#include "print_board.hpp"
-#include "read_input.hpp"
-#include "solve_puzzle.hpp"
+#include "print_board.h"
+#include "read_input.h"
+#include "solve_puzzle.h"
 #include "typedefs.h"
-#include "validity_checks.hpp"
+#include "validity_checks.h"
 
 int main(void) {
 	size_t boardWidth = 0;

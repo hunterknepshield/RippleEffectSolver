@@ -1,12 +1,12 @@
 //
-//  solve_puzzle.cpp
+//  solve_puzzle.cc
 //  RippleEffectSolver
 //
 //  Created by Hunter Knepshield on 2/12/17.
 //  Copyright © 2017 Hunter Knepshield. All rights reserved.
 //
 
-#include "solve_puzzle.hpp"
+#include "solve_puzzle.h"
 
 #include <algorithm>
 #include <iostream>
@@ -15,9 +15,9 @@
 #include <utility>
 #include <vector>
 
-#include "print_board.hpp"
+#include "print_board.h"
 #include "typedefs.h"
-#include "validity_checks.hpp"
+#include "validity_checks.h"
 
 std::pair<bool, Board> findSingleSolution(
 	Board /* intentional copy */ cellValues, const Board& roomIds,
