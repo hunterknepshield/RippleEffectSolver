@@ -61,6 +61,73 @@ std::pair<bool, Board> findSingleSolution(
 		return {true, cellValues};
 	}
 
+	// Now, we need to make a choice. Find the first empty cell and fill it with
+	// its first possibility, then recurse. If that returns a valid solution,
+	// return that. Otherwise, try the next value.
+	switch (VERBOSITY) {
+		case 2:
+			printBoard(cellValues, roomIds);
+		case 1:
+			std::cout << "Unable to fill in any more cells with certainty. "
+						 "Beginning to branch."
+					  << std::endl;
+		default:
+			break;
+	}
+	for (int r = 0; r < cellValues.size(); r++) {
+		for (int c = 0; c < cellValues[r].size(); c++) {
+			if (cellValues[r][c]) {
+				continue;
+			}
+			// Now determine which values are possible here.
+			int room = roomIds[r][c];
+			std::vector<bool> usedNumber(cellsInRoom.at(room).size(), false);
+			for (const auto& cell : cellsInRoom.at(room)) {
+				int value = cellValues[cell.first][cell.second];
+				if (value) {
+					usedNumber[value - 1] = true;
+				}
+			}
+			std::vector<int> possibleValues;
+			for (int i = 0; i < usedNumber.size(); i++) {
+				if (!usedNumber[i]) {
+					possibleValues.push_back(i + 1);
+				}
+			}
+			for (int possibility : possibleValues) {
+				if (checkRow({r, c}, possibility, cellValues) &&
+					checkColumn({r, c}, possibility, cellValues)) {
+					// Now we attempt this completion, and undo it if it doesn't
+					// work.
+					cellValues[r][c] = possibility;
+					cellsCompletedInRoom[room]++;
+					switch (VERBOSITY) {
+						case 2:
+							printBoard(cellValues, roomIds);
+						case 1:
+							std::cout << "Branching by filling (" << r + 1
+									  << ", " << c + 1 << ") with value "
+									  << possibility << "." << std::endl;
+						default:
+							break;
+					}
+					const auto& resultAndBoard =
+						findSingleSolution(cellValues, roomIds, cellsInRoom,
+										   cellsCompletedInRoom, VERBOSITY);
+					if (resultAndBoard.first) {
+						// This is a valid completion.
+						return resultAndBoard;
+					}
+					cellValues[r][c] = 0;
+					cellsCompletedInRoom[room]--;
+				}
+			}
+			// We've exhausted every possibility for this cell without finding
+			// a valid one, which means either this board is unsolvable or we
+			// branched incorrectly somewhere up the call stack.
+			return {false, {}};
+		}
+	}
 	return {false, {}};
 }
 
