@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 
+// A (row, column) pair of indices into a Board.
 typedef std::pair<int, int> Cell;
 typedef std::vector<Cell> CellList;
 typedef std::vector<std::vector<int>> Board;

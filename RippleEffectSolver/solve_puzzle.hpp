@@ -11,7 +11,8 @@
 
 #include "typedefs.h"
 
-// Returns the number of cells filled in.
+// Loops over a particular room until no cells can be filled in with 100%
+// certainty. Returns the number of cells filled in.
 int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 						 const CellList& cellsInRoom, int verbosity);
 
