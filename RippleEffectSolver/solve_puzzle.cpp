@@ -52,7 +52,8 @@ std::pair<bool, Board> findSingleSolution(
 	// Now, we need to make a choice. Find the first empty cell and fill it with
 	// its first possibility, then recurse. If that returns a valid solution,
 	// return that. Otherwise, try the next value until one is found or all are
-	// exhausted.
+	// exhausted. This is indeed DFS, not BFS, but it is guaranteed to
+	// eventually terminate for any input due to the nature of the puzzle.
 	switch (VERBOSITY) {
 		case 2:
 		case 1:
