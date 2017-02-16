@@ -40,25 +40,25 @@ int main(void) {
 
 	// Now some initial setup...
 	// Maps room ID to a list of pairs of cell coordinates in the room.
-	std::map<int, CellList> cellsInRoom;
+	RoomMap roomMap;
 	// Maps room ID to the number of cells completed in the room.
 	std::map<int, int> cellsCompletedInRoom;
 	for (int r = 0; r < roomIds.size(); r++) {
 		for (int c = 0; c < roomIds[r].size(); c++) {
 			// TODO enforce contiguous rooms here? May also want to validate
 			// givens. For now assuming valid input.
-			cellsInRoom[roomIds[r][c]].push_back({r, c});
+			roomMap[roomIds[r][c]].push_back({r, c});
 			if (cellValues[r][c]) {
 				cellsCompletedInRoom[roomIds[r][c]]++;
 			}
 		}
 	}
-	// To get the size of room n, use cellsInRoom[n].size().
+	// To get the size of room n, use roomMap[n].size().
 	// To get the value of cell (r, c), use cellValues[r][c].
 	// To get the room ID of cell (r, c), use roomIds[r][c].
 
 	const auto& solvedWithBoard = findSingleSolution(
-		cellValues, roomIds, cellsInRoom, cellsCompletedInRoom, VERBOSITY);
+		cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
 	if (solvedWithBoard.first) {
 		std::cout << "Solved the puzzle. Final state:" << std::endl;
 		printBoard(solvedWithBoard.second, roomIds);

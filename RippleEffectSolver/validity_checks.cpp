@@ -9,7 +9,6 @@
 #include "validity_checks.hpp"
 
 #include <algorithm>
-#include <map>
 
 #include "typedefs.h"
 
@@ -74,7 +73,7 @@ bool checkRoom(const Cell& cell, const CellList& cells, int value,
 }
 
 bool validateCompletedBoard(const Board& cellValues, const Board& roomIds,
-							const std::map<int, CellList>& cellsInRoom) {
+							const RoomMap& roomMap) {
 	for (int r = 0; r < cellValues.size(); r++) {
 		for (int c = 0; c < cellValues[r].size(); c++) {
 			if (!cellValues[r][c]) {
@@ -87,8 +86,8 @@ bool validateCompletedBoard(const Board& cellValues, const Board& roomIds,
 			if (!checkColumn({r, c}, cellValues[r][c], cellValues)) {
 				return false;
 			}
-			if (!checkRoom({r, c}, cellsInRoom.at(roomIds[r][c]),
-						   cellValues[r][c], cellValues)) {
+			if (!checkRoom({r, c}, roomMap.at(roomIds[r][c]), cellValues[r][c],
+						   cellValues)) {
 				return false;
 			}
 		}

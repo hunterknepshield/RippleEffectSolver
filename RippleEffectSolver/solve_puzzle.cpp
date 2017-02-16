@@ -20,7 +20,7 @@
 
 std::pair<bool, Board> findSingleSolution(
 	Board /* intentional copy */ cellValues, const Board& roomIds,
-	const std::map<int, CellList>& cellsInRoom,
+	const RoomMap& roomMap,
 	std::map<int, int> /* intentional copy */ cellsCompletedInRoom,
 	int VERBOSITY) {
 	// Tracker to watch whether something changed on this iteration or not.
@@ -29,7 +29,7 @@ std::pair<bool, Board> findSingleSolution(
 	bool modifiedBoard;
 	do {
 		modifiedBoard = false;
-		for (const auto& roomAndCells : cellsInRoom) {
+		for (const auto& roomAndCells : roomMap) {
 			if (cellsCompletedInRoom[roomAndCells.first] ==
 				roomAndCells.second.size()) {
 				// This room is already complete, don't waste time here.
@@ -46,7 +46,7 @@ std::pair<bool, Board> findSingleSolution(
 	} while (modifiedBoard);
 
 	// At this point, we're either done the puzzle or need to branch.
-	if (validateCompletedBoard(cellValues, roomIds, cellsInRoom)) {
+	if (validateCompletedBoard(cellValues, roomIds, roomMap)) {
 		return {true, cellValues};
 	}
 	// Now, we need to make a choice. Find the first empty cell and fill it with
@@ -69,8 +69,8 @@ std::pair<bool, Board> findSingleSolution(
 			}
 			// Now determine which values are possible here.
 			int room = roomIds[r][c];
-			std::vector<bool> usedNumber(cellsInRoom.at(room).size(), false);
-			for (const auto& cell : cellsInRoom.at(room)) {
+			std::vector<bool> usedNumber(roomMap.at(room).size(), false);
+			for (const auto& cell : roomMap.at(room)) {
 				int value = cellValues[cell.first][cell.second];
 				if (value) {
 					usedNumber[value - 1] = true;
@@ -100,7 +100,7 @@ std::pair<bool, Board> findSingleSolution(
 							break;
 					}
 					const auto& resultAndBoard =
-						findSingleSolution(cellValues, roomIds, cellsInRoom,
+						findSingleSolution(cellValues, roomIds, roomMap,
 										   cellsCompletedInRoom, VERBOSITY);
 					if (resultAndBoard.first) {
 						// This is a valid completion.

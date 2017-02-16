@@ -19,7 +19,7 @@
 // solution exists. To find multiple solutions, see TODO implement this later.
 std::pair<bool, Board> findSingleSolution(
 	Board /* intentional copy */ cellValues, const Board& roomIds,
-	const std::map<int, CellList>& cellsInRoom,
+	const RoomMap& roomMap,
 	std::map<int, int> /* intentional copy */ cellsCompletedInRoom,
 	int verbosity);
 

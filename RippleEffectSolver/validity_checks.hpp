@@ -9,8 +9,6 @@
 #ifndef validity_checks_hpp
 #define validity_checks_hpp
 
-#include <map>
-
 #include "typedefs.h"
 
 // Returns true if the value is a valid placement in the cell for the row.
@@ -26,6 +24,6 @@ bool checkRoom(const Cell& cell, const CellList& cells, int value,
 // Returns true if the entire board contains no empty spaces and satisfies all
 // of the rules to solve it.
 bool validateCompletedBoard(const Board& cellValues, const Board& roomIds,
-							const std::map<int, CellList>& cellsInRoom);
+							const RoomMap& roomMap);
 
 #endif /* validity_checks_hpp */
