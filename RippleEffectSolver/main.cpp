@@ -15,6 +15,10 @@
 // message and board on action.
 int VERBOSITY = 2;
 
+// Multi-solution settings. false = find single solution (or none), true = find
+// all solutions (or none).
+bool FIND_ALL_SOLUTIONS = true;
+
 #include <iostream>
 #include <map>
 #include <string>
@@ -57,13 +61,31 @@ int main(void) {
 	// To get the value of cell (r, c), use cellValues[r][c].
 	// To get the room ID of cell (r, c), use roomIds[r][c].
 
-	const auto& solvedWithBoard = findSingleSolution(
-		cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
-	if (solvedWithBoard.first) {
-		std::cout << "Solved the puzzle. Final state:" << std::endl;
-		printBoard(solvedWithBoard.second, roomIds);
+	if (FIND_ALL_SOLUTIONS) {
+		const auto& solvedWithBoards = findAllSolutions(
+			cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
+		if (solvedWithBoards.first) {
+			std::cout << "The puzzle has " << solvedWithBoards.second.size()
+					  << " solution"
+					  << (solvedWithBoards.second.size() > 1 ? "s" : "") << "."
+					  << std::endl;
+			int solution = 0;
+			for (const auto& board : solvedWithBoards.second) {
+				std::cout << "Solution " << ++solution << ":" << std::endl;
+				printBoard(board, roomIds);
+			}
+		} else {
+			std::cout << "No solutions." << std::endl;
+		}
 	} else {
-		std::cout << "No solution." << std::endl;
+		const auto& solvedWithBoard = findSingleSolution(
+			cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
+		if (solvedWithBoard.first) {
+			std::cout << "Solved the puzzle. Final state:" << std::endl;
+			printBoard(solvedWithBoard.second, roomIds);
+		} else {
+			std::cout << "No solution." << std::endl;
+		}
 	}
 
 	return 0;

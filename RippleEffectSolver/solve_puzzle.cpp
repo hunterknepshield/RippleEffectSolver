@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -23,32 +24,15 @@ std::pair<bool, Board> findSingleSolution(
 	const RoomMap& roomMap,
 	std::map<int, int> /* intentional copy */ cellsCompletedInRoom,
 	int VERBOSITY) {
-	// Tracker to watch whether something changed on this iteration or not.
-	// If this is false at the end of the loop, we need to break out and try
-	// something else.
-	bool modifiedBoard;
-	do {
-		modifiedBoard = false;
-		for (const auto& roomAndCells : roomMap) {
-			if (cellsCompletedInRoom[roomAndCells.first] ==
-				roomAndCells.second.size()) {
-				// This room is already complete, don't waste time here.
-				continue;
-			}
-			int cellsFilled =
-				fillKnownCellsInRoom(cellValues, roomIds, roomAndCells.first,
-									 roomAndCells.second, VERBOSITY);
-			cellsCompletedInRoom[roomAndCells.first] += cellsFilled;
-			if (cellsFilled > 0) {
-				modifiedBoard = true;
-			}
-		}
-	} while (modifiedBoard);
+	// First, complete the things we know for sure.
+	fillKnownCellsInBoard(cellValues, roomIds, roomMap, cellsCompletedInRoom,
+						  VERBOSITY);
 
 	// At this point, we're either done the puzzle or need to branch.
 	if (validateCompletedBoard(cellValues, roomIds, roomMap)) {
 		return {true, cellValues};
 	}
+
 	// Now, we need to make a choice. Find the first empty cell and fill it with
 	// its first possibility, then recurse. If that returns a valid solution,
 	// return that. Otherwise, try the next value until one is found or all are
@@ -118,6 +102,93 @@ std::pair<bool, Board> findSingleSolution(
 		}
 	}
 	return {false, {}};
+}
+
+std::pair<bool, std::set<Board>> findAllSolutions(
+	Board /* intentional copy */ cellValues, const Board& roomIds,
+	const RoomMap& roomMap,
+	std::map<int, int> /* intentional copy */ cellsCompletedInRoom,
+	int VERBOSITY) {
+	// First, complete the things we know for sure.
+	fillKnownCellsInBoard(cellValues, roomIds, roomMap, cellsCompletedInRoom,
+						  VERBOSITY);
+
+	// At this point, we're either done the puzzle or need to branch.
+	if (validateCompletedBoard(cellValues, roomIds, roomMap)) {
+		return {true, {cellValues}};
+	}
+
+	// Now, we need to make a choice. Find the first empty cell and fill it with
+	// its first possibility, then recurse. If that returns a valid solution,
+	// return that. Otherwise, try the next value until one is found or all are
+	// exhausted. This is indeed DFS, not BFS, but it is guaranteed to
+	// eventually terminate for any input due to the nature of the puzzle.
+	switch (VERBOSITY) {
+		case 2:
+		case 1:
+			std::cout << "Unable to fill in any more cells with certainty. "
+						 "Beginning to branch."
+					  << std::endl;
+		default:
+			break;
+	}
+
+	std::set<Board> branchCompletions;
+	for (int r = 0; r < cellValues.size(); r++) {
+		for (int c = 0; c < cellValues[r].size(); c++) {
+			if (cellValues[r][c]) {
+				continue;
+			}
+			// Now determine which values are possible here.
+			int room = roomIds[r][c];
+			std::vector<bool> usedNumber(roomMap.at(room).size(), false);
+			for (const auto& cell : roomMap.at(room)) {
+				int value = cellValues[cell.first][cell.second];
+				if (value) {
+					usedNumber[value - 1] = true;
+				}
+			}
+			std::vector<int> possibleValues;
+			for (int i = 0; i < usedNumber.size(); i++) {
+				if (!usedNumber[i]) {
+					possibleValues.push_back(i + 1);
+				}
+			}
+			for (int possibility : possibleValues) {
+				if (checkRow({r, c}, possibility, cellValues) &&
+					checkColumn({r, c}, possibility, cellValues)) {
+					// Now we attempt this completion, and undo it if it doesn't
+					// work.
+					cellValues[r][c] = possibility;
+					cellsCompletedInRoom[room]++;
+					switch (VERBOSITY) {
+						case 2:
+							printBoard(cellValues, roomIds);
+						case 1:
+							std::cout << "Branching by filling (" << r + 1
+									  << ", " << c + 1 << ") with value "
+									  << possibility << "." << std::endl;
+						default:
+							break;
+					}
+					const auto& resultAndBoards =
+						findAllSolutions(cellValues, roomIds, roomMap,
+										 cellsCompletedInRoom, VERBOSITY);
+					if (resultAndBoards.first) {
+						// We have valid completions.
+						branchCompletions.insert(resultAndBoards.second.begin(),
+												 resultAndBoards.second.end());
+					}
+					cellValues[r][c] = 0;
+					cellsCompletedInRoom[room]--;
+				}
+			}
+			// We've exhausted every possibility for this cell without finding
+			// a valid one, which means either this board is unsolvable or we
+			// branched incorrectly somewhere up the call stack.
+		}
+	}
+	return {branchCompletions.size() > 0, branchCompletions};
 }
 
 int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
@@ -240,4 +311,28 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 		// Note to self: trim possibilities vector if doing more work after this
 	} while (modifiedRoom);
 	return cellsFilled;
+}
+
+void fillKnownCellsInBoard(Board& cellValues, const Board& roomIds,
+						   const RoomMap& roomMap,
+						   std::map<int, int>& cellsCompletedInRoom,
+						   int VERBOSITY) {
+	bool modifiedBoard;
+	do {
+		modifiedBoard = false;
+		for (const auto& roomAndCells : roomMap) {
+			if (cellsCompletedInRoom[roomAndCells.first] ==
+				roomAndCells.second.size()) {
+				// This room is already complete, don't waste time here.
+				continue;
+			}
+			int cellsFilled =
+				fillKnownCellsInRoom(cellValues, roomIds, roomAndCells.first,
+									 roomAndCells.second, VERBOSITY);
+			cellsCompletedInRoom[roomAndCells.first] += cellsFilled;
+			if (cellsFilled > 0) {
+				modifiedBoard = true;
+			}
+		}
+	} while (modifiedBoard);
 }
