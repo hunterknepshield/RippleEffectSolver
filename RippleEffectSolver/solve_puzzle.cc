@@ -29,7 +29,7 @@ std::pair<bool, Board> findSingleSolution(
 						  VERBOSITY);
 
 	// At this point, we're either done the puzzle or need to branch.
-	if (validateCompletedBoard(cellValues, roomIds, roomMap)) {
+	if (validateCompleteBoard(cellValues, roomIds, roomMap)) {
 		return {true, cellValues};
 	}
 
@@ -114,7 +114,7 @@ std::pair<bool, std::set<Board>> findAllSolutions(
 						  VERBOSITY);
 
 	// At this point, we're either done the puzzle or need to branch.
-	if (validateCompletedBoard(cellValues, roomIds, roomMap)) {
+	if (validateCompleteBoard(cellValues, roomIds, roomMap)) {
 		return {true, {cellValues}};
 	}
 

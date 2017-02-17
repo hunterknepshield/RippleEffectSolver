@@ -23,7 +23,18 @@ bool checkRoom(const Cell& cell, const CellList& cells, int value,
 
 // Returns true if the entire board contains no empty spaces and satisfies all
 // of the rules to solve it.
-bool validateCompletedBoard(const Board& cellValues, const Board& roomIds,
-							const RoomMap& roomMap);
+bool validateBoard(const Board& cellValues, const Board& roomIds,
+				   const RoomMap& roomMap, bool allowEmpty);
+
+inline bool validateCompleteBoard(const Board& cellValues, const Board& roomIds,
+								  const RoomMap& roomMap) {
+	return validateBoard(cellValues, roomIds, roomMap, false);
+}
+
+inline bool validateIncompleteBoard(const Board& cellValues,
+									const Board& roomIds,
+									const RoomMap& roomMap) {
+	return validateBoard(cellValues, roomIds, roomMap, true);
+}
 
 #endif /* validity_checks_h */

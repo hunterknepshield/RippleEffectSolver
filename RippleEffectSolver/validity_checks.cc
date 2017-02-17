@@ -72,12 +72,14 @@ bool checkRoom(const Cell& cell, const CellList& cells, int value,
 	return true;
 }
 
-bool validateCompletedBoard(const Board& cellValues, const Board& roomIds,
-							const RoomMap& roomMap) {
+bool validateBoard(const Board& cellValues, const Board& roomIds,
+				   const RoomMap& roomMap, bool allowEmpty) {
 	for (int r = 0; r < cellValues.size(); r++) {
 		for (int c = 0; c < cellValues[r].size(); c++) {
-			if (!cellValues[r][c]) {
-				// Empty cell. This isn't a complete board.
+			if (allowEmpty && cellValues[r][c] == 0) {
+				continue;
+			} else if (!allowEmpty && cellValues[r][c] == 0) {
+				// We were expecting this board to be complete.
 				return false;
 			}
 			if (!checkRow({r, c}, cellValues[r][c], cellValues)) {

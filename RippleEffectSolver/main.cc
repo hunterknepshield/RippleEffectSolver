@@ -52,6 +52,11 @@ int main(void) {
 			}
 		}
 	}
+	if (!validateIncompleteBoard(cellValues, roomIds, roomMap)) {
+		std::cerr << "Invalid initial board." << std::endl;
+		return 1;
+	}
+
 	// To get the size of room n, use roomMap[n].size().
 	// To get the value of cell (r, c), use cellValues[r][c].
 	// To get the room ID of cell (r, c), use roomIds[r][c].
