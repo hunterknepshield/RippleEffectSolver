@@ -6,19 +6,6 @@
 //  Copyright © 2017 Hunter Knepshield. All rights reserved.
 //
 
-// If your console or font doesn't play nice with the pretty board symbols,
-// uncomment this #define and it will print only numbers. The caveat is that it
-// then won't print any sort of room borders.
-// #define SIMPLE_PRINT_BOARD
-
-// Verbosity settings. 0 = silent, 1 = print message on action, 2 = print
-// message and board on action.
-int VERBOSITY = 0;
-
-// Multi-solution settings. false = find single solution (or none), true = find
-// all solutions (or none).
-bool FIND_ALL_SOLUTIONS = false;
-
 #include <iostream>
 #include <map>
 #include <string>
@@ -28,6 +15,17 @@ bool FIND_ALL_SOLUTIONS = false;
 #include "solve_puzzle.h"
 #include "typedefs.h"
 #include "validity_checks.h"
+
+// If printBoard's pretty characters aren't playing nice with your font or
+// console, uncomment the #define in print_board.h.
+
+// Verbosity settings. 0 = silent, 1 = print message on action, 2 = print
+// message and board on action.
+int VERBOSITY = 0;
+
+// Multi-solution settings. false = find single solution (or none), true = find
+// all solutions (or none).
+bool FIND_ALL_SOLUTIONS = false;
 
 int main(void) {
 	size_t boardWidth = 0;
