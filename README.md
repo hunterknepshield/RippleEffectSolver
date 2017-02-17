@@ -20,8 +20,8 @@ values until one yields a solution further down the call stack.
 
 I also wrote code that gathers all possible solutions to a puzzle, instead of
 returning after finding just one. This is made super simple partially by C++'s
-blood magic that for some reason gives vector<vector<int>> a default equality
-check so they can be stuck into a set without concern.
+blood magic that for some reason gives `vector<vector<int>>` a default equality
+check so they can be stuck into a `set` without concern.
 
 ## Binary Options
 There are a few options in the code to control output.
@@ -31,7 +31,8 @@ printed.
 solutions are found or not.
 - In `print_board.h`, there is a `#define` that controls the `printBoard`
 function. Specifically, un-commenting it prevents special Unicode grid
-characters from printing.
+characters from printing. Xcode usually plays nice with them, but many fonts and
+terminals usually don't.
 
 ## Building the Binary
 This code makes use of several C++11 features, so your compiler must support
@@ -53,7 +54,7 @@ entire board.
 See one of the sample puzzle files for more info.
 
 Running the solver on one of the supplied puzzles is fairly simple:
-``./solver <Puzzle1.txt``
+`./solver <Puzzle1.txt`
 
 ## Sample Puzzles
 Puzzle 1 was taken from Nikoli's site and has an "easy" rating. Author Hammy.
