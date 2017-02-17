@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5A4328381E56A451001FB223 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 5A4328371E56A451001FB223 /* README.md */; };
 		5A6B233E1E51661800B82DBE /* solve_puzzle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B233C1E51661800B82DBE /* solve_puzzle.cc */; };
 		5A89816D1E4DB24B0093AE21 /* validity_checks.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5A89816B1E4DB24B0093AE21 /* validity_checks.cc */; };
 		5AF3D3471E4D385A008FC4F1 /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D3461E4D385A008FC4F1 /* main.cc */; };
@@ -170,7 +169,6 @@
 			files = (
 				5AF3D3501E4D7817008FC4F1 /* print_board.cc in Sources */,
 				5AF3D3551E4D833E008FC4F1 /* read_input.cc in Sources */,
-				5A4328381E56A451001FB223 /* README.md in Sources */,
 				5A6B233E1E51661800B82DBE /* solve_puzzle.cc in Sources */,
 				5A89816D1E4DB24B0093AE21 /* validity_checks.cc in Sources */,
 				5AF3D3471E4D385A008FC4F1 /* main.cc in Sources */,
