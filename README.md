@@ -1,5 +1,4 @@
 # Ripple Effect Solver
-## Hunter Knepshield
 
 ## Ripple Effect
 Ripple effect is a Nikoli puzzle, see
