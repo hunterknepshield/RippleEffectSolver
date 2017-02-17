@@ -15,6 +15,7 @@
 
 #include "typedefs.h"
 
+// Consumes a string of space-delimited integers and returns them in a vector.
 std::vector<int> interpretString(const std::string& s) {
 	std::vector<int> v;
 	std::stringstream stream(s);
