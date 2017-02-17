@@ -57,6 +57,7 @@ Running the solver on one of the supplied puzzles is fairly simple:
 `./solver <Puzzle1.txt`
 
 ## Sample Run
+```
 5 0 0 0 0 0
 0 3 0 0 0 0
 0 0 1 0 0 0
@@ -105,6 +106,7 @@ Solved the puzzle. Final state:
 ├─┘ ┌─┘ │ │ │
 │5 2│1 3│2│1│
 └───┴───┴─┴─┘
+```
 
 ## Sample Puzzles
 Puzzle 1 was taken from Nikoli's site and has an "easy" rating. Author Hammy.
