@@ -17,7 +17,7 @@ int VERBOSITY = 2;
 
 // Multi-solution settings. false = find single solution (or none), true = find
 // all solutions (or none).
-bool FIND_ALL_SOLUTIONS = true;
+bool FIND_ALL_SOLUTIONS = false;
 
 #include <iostream>
 #include <map>
