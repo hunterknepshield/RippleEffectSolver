@@ -44,7 +44,8 @@ and run `make`. It will build a single binary, `solver`.
 ## Running the Binary
 Command line arguments are ignored.
 
-All input is read from stdin:
+All input is read from stdin, with an additional empty line indicating an end to
+that portion of input:
 - First, the board's cell values are read, line by line, delimited by 1 or more
 space. A value of 0 means that cell is not yet filled in.
 - Then, the board's rooms are read in using a similar method, but each room is
