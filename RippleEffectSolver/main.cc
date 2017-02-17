@@ -13,7 +13,7 @@
 
 // Verbosity settings. 0 = silent, 1 = print message on action, 2 = print
 // message and board on action.
-int VERBOSITY = 2;
+int VERBOSITY = 0;
 
 // Multi-solution settings. false = find single solution (or none), true = find
 // all solutions (or none).
@@ -36,11 +36,8 @@ int main(void) {
 		!readRooms(boardWidth, cellValues.size(), &roomIds)) {
 		return 1;
 	}
-
-	if (VERBOSITY) {
-		std::cout << "Initial board state:" << std::endl;
-		printBoard(cellValues, roomIds);
-	}
+	std::cout << "Initial board state:" << std::endl;
+	printBoard(cellValues, roomIds);
 
 	// Now some initial setup...
 	// Maps room ID to a list of pairs of cell coordinates in the room.
