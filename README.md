@@ -58,6 +58,9 @@ Running the solver on one of the supplied puzzles is fairly simple:
 
 ## Sample Puzzles
 Puzzle 1 was taken from Nikoli's site and has an "easy" rating. Author Hammy.
+
 Puzzle 2 was created by me and is slightly more difficult than puzzle 1.
+
 Puzzle 3 was also my creation and is similar to puzzle 2's difficulty level.
+
 Puzzle 4 was also from Nikoli's site and has a "hard" rating. Author T.Karino.
