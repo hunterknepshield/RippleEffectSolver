@@ -59,6 +59,7 @@ Running the solver on one of the supplied puzzles is fairly simple:
 
 ## Sample Run
 ```
+$ ./solver <Puzzle2.txt
 5 0 0 0 0 0
 0 3 0 0 0 0
 0 0 1 0 0 0

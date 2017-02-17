@@ -1,4 +1,3 @@
-OBJS = print_board.o read_input.o solve_puzzle.o typedefs.o validity_checks.o
 CC = g++
 CC_FLAGS = -std=c++11
 
