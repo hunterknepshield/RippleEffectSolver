@@ -23,7 +23,20 @@ returning after finding just one. This is made super simple partially by C++'s
 blood magic that for some reason gives vector<vector<int>> a default equality
 check so they can be stuck into a set without concern.
 
+## Binary Options
+There are a few options in the code to control output.
+- In `main.cc`, there is a VERBOSITY value to control how much info gets 
+printed.
+- In `main.cc`, there is a FIND_ALL_SOLUTIONS value to control whether all
+solutions are found or not.
+- In `print_board.h`, there is a `#define` that controls the `printBoard`
+function. Specifically, un-commenting it prevents special Unicode grid
+characters from printing.
+
 ## Building the Binary
+This code makes use of several C++11 features, so your compiler must support
+that standard.
+
 There is a makefile included, just open the appropriate directory in a terminal
 and run `make`. It will build a single binary, `solver`.
 
@@ -40,4 +53,10 @@ entire board.
 See one of the sample puzzle files for more info.
 
 Running the solver on one of the supplied puzzles is fairly simple:
-```./solver <Puzzle1.txt```
+``./solver <Puzzle1.txt``
+
+## Sample Puzzles
+Puzzle 1 was taken from Nikoli's site and has an "easy" rating. Author Hammy.
+Puzzle 2 was created by me and is slightly more difficult than puzzle 1.
+Puzzle 3 was also my creation and is similar to puzzle 2's difficulty level.
+Puzzle 4 was also from Nikoli's site and has a "hard" rating. Author T.Karino.
