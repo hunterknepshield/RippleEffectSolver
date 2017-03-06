@@ -83,25 +83,22 @@ int augmentExistingPuzzle() {
 
 		std::cout << "Computing all solutions to the current board..."
 				  << std::endl;
-		bool* finished = new bool(false);  // Have we computed all solutions?
-		bool* deleted = new bool(false);   // Has `finished` been deleted?
+		bool* otherThreadFinished = new bool(false);
 		// A cute little thread to only print the "this is taking a while"
 		// message if it's actually taking a while. Cleans up after itself.
-		std::thread printerThread([finished, deleted]() {
+		std::thread printerThread([otherThreadFinished]() {
 			// Prints a message about long-running operations after 10 seconds.
 			// Deletes `finished` (allocated with `new`), setting `deleted` to
 			// true before doing so.
 			std::this_thread::sleep_for(std::chrono::seconds(10));
-			if (*deleted) {
+			if (*otherThreadFinished) {
 				// The main thread found all solutions within 10 seconds and
-				// deleted finished already, so we just need to clean up
-				// deleted.
-				delete deleted;
+				// finished already, so we just need to clean up.
+				delete otherThreadFinished;
 			} else {
 				// The main thread isn't done computing all the solutions yet,
-				// so we do partial cleanup, and let it delete deleted.
-				*deleted = true;
-				delete finished;
+				// so we let it clean up instead.
+				*otherThreadFinished = true;
 				std::cout << "If this takes a really long time, consider "
 							 "filling in more cells and rerunning."
 						  << std::endl;
@@ -109,16 +106,17 @@ int augmentExistingPuzzle() {
 		});
 		std::tie(solved, boards) = findAllSolutions(
 			cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
-		if (*deleted) {
-			// The printer thread finished before us and already deleted
-			// finished. Deleted remains alive, so delete it now.
-			delete deleted;
+		if (*otherThreadFinished) {
+			// The printer thread finished before us, so we clean up.
+			delete otherThreadFinished;
 		} else {
 			// This finished before the printer thread, so we tell it we're done
-			// and it will delete finished and deleted for us.
-			*finished = true;
+			// and it will clean up.
+			*otherThreadFinished = true;
 			// Detach so we don't cause any issues when the stack variable goes
-			// out of scope.
+			// out of scope. C++11's threads don't support interrupts so this is
+			// the best we can do. May cause minor memory leaks if the printer
+			// thread gets killed by an exit before it deletes the bool.
 			printerThread.detach();
 		}
 		if (boards.size() == 0) {
