@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <map>
 
 #include "print_board.h"
 #include "read_input.h"

@@ -8,6 +8,13 @@
 
 #include <iostream>
 
+#include "print_board.h"
+#include "read_input.h"
+#include "solve_puzzle.h"
+#include "typedefs.h"
+#include "validity_checks.h"
+
+
 int main(void) {
 	// insert code here...
 	std::cout << "Hello, World!\n";
