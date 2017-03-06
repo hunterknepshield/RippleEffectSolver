@@ -45,6 +45,9 @@ void fillKnownCellsInBoard(Board& cellValues, const Board& roomIds,
 						   std::map<int, int>& cellsCompletedInRoom,
 						   int verbosity);
 
-std::pair<RoomMap, std::map<int, int>> generateRoomMapAndCompletedCellMap(const Board& cellValues, const Board& roomIds);
+// Generates two maps, one mapping room ID to a list of cells in the room, and
+// the other mapping room ID to the count of completed cells in the room so far.
+std::pair<RoomMap, std::map<int, int>> generateRoomMapAndCompletedCellMap(
+	const Board& cellValues, const Board& roomIds);
 
 #endif /* solve_puzzle_h */

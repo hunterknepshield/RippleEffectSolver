@@ -337,7 +337,8 @@ void fillKnownCellsInBoard(Board& cellValues, const Board& roomIds,
 	} while (modifiedBoard);
 }
 
-std::pair<RoomMap, std::map<int, int>> generateRoomMapAndCompletedCellMap(const Board& cellValues, const Board& roomIds) {
+std::pair<RoomMap, std::map<int, int>> generateRoomMapAndCompletedCellMap(
+	const Board& cellValues, const Board& roomIds) {
 	RoomMap roomMap;
 	std::map<int, int> cellsCompletedInRoom;
 	for (int r = 0; r < roomIds.size(); r++) {

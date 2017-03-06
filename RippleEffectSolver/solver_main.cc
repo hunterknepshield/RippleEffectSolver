@@ -41,7 +41,8 @@ int main(void) {
 	RoomMap roomMap;
 	// Maps room ID to the number of cells completed in the room.
 	std::map<int, int> cellsCompletedInRoom;
-	std::tie(roomMap, cellsCompletedInRoom) = generateRoomMapAndCompletedCellMap(cellValues, roomIds);
+	std::tie(roomMap, cellsCompletedInRoom) =
+		generateRoomMapAndCompletedCellMap(cellValues, roomIds);
 
 	if (!validateIncompleteBoard(cellValues, roomIds, roomMap)) {
 		std::cerr << "Invalid initial board." << std::endl;
