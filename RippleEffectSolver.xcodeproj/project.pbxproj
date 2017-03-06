@@ -9,12 +9,26 @@
 /* Begin PBXBuildFile section */
 		5A6B233E1E51661800B82DBE /* solve_puzzle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B233C1E51661800B82DBE /* solve_puzzle.cc */; };
 		5A89816D1E4DB24B0093AE21 /* validity_checks.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5A89816B1E4DB24B0093AE21 /* validity_checks.cc */; };
-		5AF3D3471E4D385A008FC4F1 /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D3461E4D385A008FC4F1 /* main.cc */; };
+		5AB016B41E6CE85D00109D69 /* print_board.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D34E1E4D7817008FC4F1 /* print_board.cc */; };
+		5AB016B51E6CE86200109D69 /* read_input.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D3531E4D833E008FC4F1 /* read_input.cc */; };
+		5AB016B61E6CE86800109D69 /* solve_puzzle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B233C1E51661800B82DBE /* solve_puzzle.cc */; };
+		5AB016B71E6CE86800109D69 /* validity_checks.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5A89816B1E4DB24B0093AE21 /* validity_checks.cc */; };
+		5AB016BA1E6CEC0100109D69 /* creator_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5AB016B81E6CEBAE00109D69 /* creator_main.cc */; };
+		5AF3D3471E4D385A008FC4F1 /* solver_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D3461E4D385A008FC4F1 /* solver_main.cc */; };
 		5AF3D3501E4D7817008FC4F1 /* print_board.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D34E1E4D7817008FC4F1 /* print_board.cc */; };
 		5AF3D3551E4D833E008FC4F1 /* read_input.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D3531E4D833E008FC4F1 /* read_input.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		5AB016AB1E6CE83800109D69 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		5AF3D3411E4D3859008FC4F1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -35,8 +49,10 @@
 		5A6B233F1E51664400B82DBE /* typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = typedefs.h; sourceTree = "<group>"; };
 		5A89816B1E4DB24B0093AE21 /* validity_checks.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = validity_checks.cc; sourceTree = "<group>"; };
 		5A89816C1E4DB24B0093AE21 /* validity_checks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = validity_checks.h; sourceTree = "<group>"; };
+		5AB016AD1E6CE83800109D69 /* RippleEffectCreator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RippleEffectCreator; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AB016B81E6CEBAE00109D69 /* creator_main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = creator_main.cc; sourceTree = "<group>"; };
 		5AF3D3431E4D385A008FC4F1 /* RippleEffectSolver */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RippleEffectSolver; sourceTree = BUILT_PRODUCTS_DIR; };
-		5AF3D3461E4D385A008FC4F1 /* main.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cc; sourceTree = "<group>"; };
+		5AF3D3461E4D385A008FC4F1 /* solver_main.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = solver_main.cc; sourceTree = "<group>"; };
 		5AF3D34D1E4D6A58008FC4F1 /* Puzzle1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Puzzle1.txt; sourceTree = "<group>"; };
 		5AF3D34E1E4D7817008FC4F1 /* print_board.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = print_board.cc; sourceTree = "<group>"; };
 		5AF3D34F1E4D7817008FC4F1 /* print_board.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = print_board.h; sourceTree = "<group>"; };
@@ -50,6 +66,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5AB016AA1E6CE83800109D69 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5AF3D3401E4D3859008FC4F1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -72,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				5AF3D3431E4D385A008FC4F1 /* RippleEffectSolver */,
+				5AB016AD1E6CE83800109D69 /* RippleEffectCreator */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -81,7 +105,8 @@
 			children = (
 				5A4328371E56A451001FB223 /* README.md */,
 				5AF3D3511E4D7C4E008FC4F1 /* Puzzles */,
-				5AF3D3461E4D385A008FC4F1 /* main.cc */,
+				5AF3D3461E4D385A008FC4F1 /* solver_main.cc */,
+				5AB016B81E6CEBAE00109D69 /* creator_main.cc */,
 				5AF3D34E1E4D7817008FC4F1 /* print_board.cc */,
 				5AF3D34F1E4D7817008FC4F1 /* print_board.h */,
 				5AF3D3531E4D833E008FC4F1 /* read_input.cc */,
@@ -113,6 +138,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5AB016AC1E6CE83800109D69 /* RippleEffectCreator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5AB016B31E6CE83800109D69 /* Build configuration list for PBXNativeTarget "RippleEffectCreator" */;
+			buildPhases = (
+				5AB016A91E6CE83800109D69 /* Sources */,
+				5AB016AA1E6CE83800109D69 /* Frameworks */,
+				5AB016AB1E6CE83800109D69 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RippleEffectCreator;
+			productName = RippleEffectCreator;
+			productReference = 5AB016AD1E6CE83800109D69 /* RippleEffectCreator */;
+			productType = "com.apple.product-type.tool";
+		};
 		5AF3D3421E4D3859008FC4F1 /* RippleEffectSolver */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5AF3D34A1E4D385A008FC4F1 /* Build configuration list for PBXNativeTarget "RippleEffectSolver" */;
@@ -139,6 +181,10 @@
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Hunter Knepshield";
 				TargetAttributes = {
+					5AB016AC1E6CE83800109D69 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+					};
 					5AF3D3421E4D3859008FC4F1 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -158,11 +204,24 @@
 			projectRoot = "";
 			targets = (
 				5AF3D3421E4D3859008FC4F1 /* RippleEffectSolver */,
+				5AB016AC1E6CE83800109D69 /* RippleEffectCreator */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5AB016A91E6CE83800109D69 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AB016B51E6CE86200109D69 /* read_input.cc in Sources */,
+				5AB016B61E6CE86800109D69 /* solve_puzzle.cc in Sources */,
+				5AB016BA1E6CEC0100109D69 /* creator_main.cc in Sources */,
+				5AB016B71E6CE86800109D69 /* validity_checks.cc in Sources */,
+				5AB016B41E6CE85D00109D69 /* print_board.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5AF3D33F1E4D3859008FC4F1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -171,13 +230,27 @@
 				5AF3D3551E4D833E008FC4F1 /* read_input.cc in Sources */,
 				5A6B233E1E51661800B82DBE /* solve_puzzle.cc in Sources */,
 				5A89816D1E4DB24B0093AE21 /* validity_checks.cc in Sources */,
-				5AF3D3471E4D385A008FC4F1 /* main.cc in Sources */,
+				5AF3D3471E4D385A008FC4F1 /* solver_main.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		5AB016B11E6CE83800109D69 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5AB016B21E6CE83800109D69 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		5AF3D3481E4D385A008FC4F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -282,6 +355,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5AB016B31E6CE83800109D69 /* Build configuration list for PBXNativeTarget "RippleEffectCreator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AB016B11E6CE83800109D69 /* Debug */,
+				5AB016B21E6CE83800109D69 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		5AF3D33E1E4D3859008FC4F1 /* Build configuration list for PBXProject "RippleEffectSolver" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
