@@ -11,6 +11,8 @@ CREATOR_SOURCES = $(filter-out solver_main.cc, $(wildcard *.cc))
 CREATOR_OBJECTS = $(CREATOR_SOURCES:.cc=.o)
 
 # Main targets
+all: $(SOLVER_EXEC) $(CREATOR_EXEC)
+
 $(SOLVER_EXEC): $(SOLVER_OBJECTS)
 	$(CC) $(SOLVER_OBJECTS) -o $(SOLVER_EXEC)
 
