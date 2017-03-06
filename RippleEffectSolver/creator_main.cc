@@ -84,7 +84,7 @@ int augmentExistingPuzzle() {
 		std::cout << "Computing all solutions to the current board..."
 				  << std::endl;
 		bool* finished = new bool(false);  // Have we computed all solutions?
-		bool* deleted = new bool(false);  // Has `finished` been deleted?
+		bool* deleted = new bool(false);   // Has `finished` been deleted?
 		// A cute little thread to only print the "this is taking a while"
 		// message if it's actually taking a while. Cleans up after itself.
 		std::thread printerThread([finished, deleted]() {
