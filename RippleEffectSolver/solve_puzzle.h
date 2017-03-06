@@ -45,4 +45,6 @@ void fillKnownCellsInBoard(Board& cellValues, const Board& roomIds,
 						   std::map<int, int>& cellsCompletedInRoom,
 						   int verbosity);
 
+std::pair<RoomMap, std::map<int, int>> generateRoomMapAndCompletedCellMap(const Board& cellValues, const Board& roomIds);
+
 #endif /* solve_puzzle_h */

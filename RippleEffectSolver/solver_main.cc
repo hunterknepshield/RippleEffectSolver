@@ -41,16 +41,8 @@ int main(void) {
 	RoomMap roomMap;
 	// Maps room ID to the number of cells completed in the room.
 	std::map<int, int> cellsCompletedInRoom;
-	for (int r = 0; r < roomIds.size(); r++) {
-		for (int c = 0; c < roomIds[r].size(); c++) {
-			// TODO enforce contiguous rooms here? May also want to validate
-			// givens. For now assuming valid input.
-			roomMap[roomIds[r][c]].push_back({r, c});
-			if (cellValues[r][c]) {
-				cellsCompletedInRoom[roomIds[r][c]]++;
-			}
-		}
-	}
+	std::tie(roomMap, cellsCompletedInRoom) = generateRoomMapAndCompletedCellMap(cellValues, roomIds);
+
 	if (!validateIncompleteBoard(cellValues, roomIds, roomMap)) {
 		std::cerr << "Invalid initial board." << std::endl;
 		return 1;

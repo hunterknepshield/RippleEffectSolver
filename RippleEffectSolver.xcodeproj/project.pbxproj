@@ -51,6 +51,7 @@
 		5A89816C1E4DB24B0093AE21 /* validity_checks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = validity_checks.h; sourceTree = "<group>"; };
 		5AB016AD1E6CE83800109D69 /* RippleEffectCreator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RippleEffectCreator; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AB016B81E6CEBAE00109D69 /* creator_main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = creator_main.cc; sourceTree = "<group>"; };
+		5AB016BB1E6D04AB00109D69 /* MultipleSolutions1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = MultipleSolutions1.txt; sourceTree = "<group>"; };
 		5AF3D3431E4D385A008FC4F1 /* RippleEffectSolver */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RippleEffectSolver; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AF3D3461E4D385A008FC4F1 /* solver_main.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = solver_main.cc; sourceTree = "<group>"; };
 		5AF3D34D1E4D6A58008FC4F1 /* Puzzle1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Puzzle1.txt; sourceTree = "<group>"; };
@@ -131,6 +132,7 @@
 				5AF3D3591E4D877F008FC4F1 /* Solution3.txt */,
 				5A4328331E568D82001FB223 /* Puzzle4.txt */,
 				5A4328341E568D8C001FB223 /* Solution4.txt */,
+				5AB016BB1E6D04AB00109D69 /* MultipleSolutions1.txt */,
 			);
 			name = Puzzles;
 			sourceTree = "<group>";
