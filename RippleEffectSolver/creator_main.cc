@@ -87,13 +87,12 @@ int augmentExistingPuzzle() {
 		// A cute little thread to only print the "this is taking a while"
 		// message if it's actually taking a while. Cleans up after itself.
 		std::thread printerThread([otherThreadFinished]() {
-			// Prints a message about long-running operations after 10 seconds.
-			// Deletes `finished` (allocated with `new`), setting `deleted` to
-			// true before doing so.
+			// Prints a message about long-running operations after 10 seconds
+			// if we're still computing all the solutions.
 			std::this_thread::sleep_for(std::chrono::seconds(10));
 			if (*otherThreadFinished) {
-				// The main thread found all solutions within 10 seconds and
-				// finished already, so we just need to clean up.
+				// The main thread found all solutions before now and finished
+				// already, so we need to clean up.
 				delete otherThreadFinished;
 			} else {
 				// The main thread isn't done computing all the solutions yet,
