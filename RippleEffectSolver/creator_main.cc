@@ -160,7 +160,8 @@ int augmentExistingPuzzle() {
 			}
 		input_value:
 			overwrittenValue = cellValues[r][c];
-			std::cout << "Value (0 is unset): ";
+			std::cout << "Value (0 is unset, " << overwrittenValue
+					  << " is current): ";
 			std::cin >> newValue;
 			if (newValue < 0 || newValue > roomMap[roomIds[r][c]].size()) {
 				std::cerr << "Invalid value." << std::endl;
