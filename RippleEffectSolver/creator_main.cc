@@ -83,8 +83,8 @@ int augmentExistingPuzzle() {
 
 		std::cout << "Computing all solutions to the current board..."
 				  << std::endl;
-		bool* finished = new bool(false);
-		bool* deleted = new bool(false);
+		bool* finished = new bool(false);  // Have we computed all solutions?
+		bool* deleted = new bool(false);  // Has `finished` been deleted?
 		// A cute little thread to only print the "this is taking a while"
 		// message if it's actually taking a while. Cleans up after itself.
 		std::thread printerThread([finished, deleted]() {
@@ -93,23 +93,32 @@ int augmentExistingPuzzle() {
 			// true before doing so.
 			std::this_thread::sleep_for(std::chrono::seconds(10));
 			if (*deleted) {
+				// The main thread found all solutions within 10 seconds and
+				// deleted finished already, so we just need to clean up
+				// deleted.
 				delete deleted;
 			} else {
-				if (!(*finished)) {
-					std::cout << "If this takes a really long time, consider "
-								 "filling in more cells and rerunning."
-							  << std::endl;
-				}
+				// The main thread isn't done computing all the solutions yet,
+				// so we do partial cleanup, and let it delete deleted.
 				*deleted = true;
 				delete finished;
+				std::cout << "If this takes a really long time, consider "
+							 "filling in more cells and rerunning."
+						  << std::endl;
 			}
 		});
 		std::tie(solved, boards) = findAllSolutions(
 			cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
 		if (*deleted) {
+			// The printer thread finished before us and already deleted
+			// finished. Deleted remains alive, so delete it now.
 			delete deleted;
 		} else {
+			// This finished before the printer thread, so we tell it we're done
+			// and it will delete finished and deleted for us.
 			*finished = true;
+			// Detach so we don't cause any issues when the stack variable goes
+			// out of scope.
 			printerThread.detach();
 		}
 		if (boards.size() == 0) {
