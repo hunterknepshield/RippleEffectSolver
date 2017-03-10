@@ -118,7 +118,7 @@ int augmentExistingPuzzle() {
 		input:
 			std::cout << "Choose a value to overwrite..." << std::endl;
 		input_r:
-			std::cout << "Value's row (1..." << cellValues.size() << "): ";
+			std::cout << "Value's row (1-" << cellValues.size() << "): ";
 			std::cin >> r;
 			r--;
 			if (r < 0 || r >= cellValues.size()) {
@@ -126,8 +126,7 @@ int augmentExistingPuzzle() {
 				goto input_r;  // Gasp!
 			}
 		input_c:
-			std::cout << "Value's column (1..." << cellValues[r].size()
-					  << "): ";
+			std::cout << "Value's column (1-" << cellValues[r].size() << "): ";
 			std::cin >> c;
 			c--;
 			if (c < 0 || c >= boardWidth) {
@@ -143,7 +142,7 @@ int augmentExistingPuzzle() {
 				std::cerr << "Invalid value." << std::endl;
 				goto input_value;  // What is the world coming to??
 			} else if (newValue == overwrittenValue) {
-				std::cerr << "Value already in place." << std::endl;
+				std::cerr << "That value already in place." << std::endl;
 				goto input;  // Pretty sure I'm going to hell for this.
 			}
 			if (newValue != 0) {
