@@ -60,4 +60,9 @@ std::pair<RoomMap, std::map<int, int>> generateRoomMapAndCompletedCellMap(
 // Counts the number of known (non-zero) cells in the current board.
 int countKnownCells(const Board& board);
 
+// Returns a mapping of cell location to the frequency of its various values
+// across all solutions supplied in `boards`.
+std::map<std::pair<int, int>, std::map<int, int>> analyzeSolutions(
+	const std::set<Board>& boards);
+
 #endif /* solve_puzzle_h */

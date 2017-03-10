@@ -387,3 +387,18 @@ int countKnownCells(const Board& board) {
 	}
 	return count;
 }
+
+std::map<std::pair<int, int>, std::map<int, int>> analyzeSolutions(
+	const std::set<Board>& boards) {
+	std::map<std::pair<int, int>, std::map<int, int>> valueFrequencyForCell;
+
+	for (int r = 0; r < (*boards.begin()).size(); r++) {
+		for (int c = 0; c < (*boards.begin())[r].size(); c++) {
+			for (const auto& board : boards) {
+				valueFrequencyForCell[{r, c}][board[r][c]]++;
+			}
+		}
+	}
+
+	return valueFrequencyForCell;
+}

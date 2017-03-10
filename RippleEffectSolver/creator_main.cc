@@ -128,8 +128,7 @@ int augmentExistingPuzzle() {
 				std::cout << "Determined " << aggregationDifference
 						  << " more known cell"
 						  << (aggregationDifference == 1 ? "" : "s")
-						  << " after aggregating possible solutions."
-						  << std::endl;
+						  << " after aggregating all solutions." << std::endl;
 				std::cout << "Currently known cell values:" << std::endl;
 				printBoard(cellValues, roomIds);
 			} else {
@@ -146,11 +145,35 @@ int augmentExistingPuzzle() {
 					  << (unknownCells == 1 ? "" : "s") << "." << std::endl;
 			std::cout << "The puzzle currently has " << boards.size()
 					  << " solutions." << std::endl;
+
+			const auto& valueFrequencyForCell = analyzeSolutions(boards);
+			switch (VERBOSITY) {
+				case 2:
+				case 1:
+					std::cout << "Value frequencies for unknown cells:" << std::endl;
+					for (const auto& cellAndValueFrequency : valueFrequencyForCell) {
+						if (cellAndValueFrequency.second.size() == 1)
+							continue;  // This is a known cell, we don't need to bother printing
+						// this out.
+						const auto& cellLocation = cellAndValueFrequency.first;
+						std::cout << "Value frequency for cell (" << cellLocation.first + 1 << ", " << cellLocation.second + 1
+						<< "):" << std::endl;
+						for (const auto& valueAndFrequency : cellAndValueFrequency.second) {
+							std::cout << '\t' << "Solutions with "
+							<< valueAndFrequency.first
+							<< " in this cell: " << valueAndFrequency.second
+							<< std::endl;
+						}
+					}
+				default:
+					break;
+			}
+
 			int newValue;
 		input:
-			std::cout << "Choose a value to overwrite..." << std::endl;
+			std::cout << "Choose a cell to overwrite..." << std::endl;
 		input_r:
-			std::cout << "Value's row (1-" << cellValues.size() << "): ";
+			std::cout << "Cell's row (1-" << cellValues.size() << "): ";
 			std::cin >> r;
 			r--;
 			if (r < 0 || r >= cellValues.size()) {
@@ -158,29 +181,43 @@ int augmentExistingPuzzle() {
 				goto input_r;  // Gasp!
 			}
 		input_c:
-			std::cout << "Value's column (1-" << cellValues[r].size() << "): ";
+			std::cout << "Cell's column (1-" << cellValues[r].size() << "): ";
 			std::cin >> c;
 			c--;
 			if (c < 0 || c >= boardWidth) {
 				std::cerr << "Invalid location." << std::endl;
 				goto input_c;  // Oh my...
 			}
-		input_value:
+			std::cout << "Value frequency for cell (" << r + 1 << ", " << c + 1
+					  << "):" << std::endl;
+			const auto& valueFrequency = valueFrequencyForCell.at({r, c});
+			for (const auto& valueAndFrequency : valueFrequency) {
+				std::cout << '\t' << "Solutions with "
+						  << valueAndFrequency.first
+						  << " in this cell: " << valueAndFrequency.second
+						  << std::endl;
+			}
 			overwrittenValue = cellValues[r][c];
-			std::cout << "Value (0 is unset, " << overwrittenValue
-					  << " is current): ";
+		input_value:
+			std::cout << "Enter new value (0 clears the cell, "
+					  << overwrittenValue
+					  << " is the current value, -1 to cancel and choose a "
+						 "different cell): ";
 			std::cin >> newValue;
-			if (newValue < 0 || newValue > roomMap[roomIds[r][c]].size()) {
+			if (newValue == -1) {
+				goto input;  // The more I use it, the more useful it seems...
+			} else if (newValue < 0 ||
+					   newValue > roomMap[roomIds[r][c]].size()) {
 				std::cerr << "Invalid value." << std::endl;
 				goto input_value;  // What is the world coming to??
 			} else if (newValue == overwrittenValue) {
 				std::cerr << "That value already in place." << std::endl;
-				goto input;  // Pretty sure I'm going to hell for this.
+				goto input_value;  // Pretty sure I'm going to hell for this.
 			}
-			if (newValue != 0) {
-				cellsCompletedInRoom[roomIds[r][c]]++;
-			} else {
+			if (newValue == 0) {
 				cellsCompletedInRoom[roomIds[r][c]]--;
+			} else {
+				cellsCompletedInRoom[roomIds[r][c]]++;
 			}
 			cellValues[r][c] = newValue;
 		}
