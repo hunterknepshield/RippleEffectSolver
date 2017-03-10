@@ -324,14 +324,14 @@ Raw initial board:
 ```
 
 ## Sample Puzzles
-Puzzle 1 was taken from Nikoli's site and has an "easy" rating. Author Hammy.
+`Puzzle1.txt` was taken from Nikoli's site and has an "easy" rating. Author Hammy.
 
-Puzzle 2 was created by me and is slightly more difficult than puzzle 1. A
+`Puzzle2.txt` was created by me and is slightly more difficult than puzzle 1. A
 modified version of this puzzle for creation purposes can be found in
 `MultipleSolutions1.txt`.
 
-Puzzle 3 was also my creation and is similar to puzzle 2's difficulty level.
+`Puzzle3.txt` was also my creation and is similar to puzzle 2's difficulty level.
 
-Puzzle 4 was also from Nikoli's site and has a "hard" rating. A modified version
+`Puzzle4.txt` was also from Nikoli's site and has a "hard" rating. A modified version
 of this puzzle for creation purposes can be found in `MultipleSolutions2.txt`.
 Author T. Karino.
