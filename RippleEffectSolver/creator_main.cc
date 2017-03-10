@@ -39,6 +39,8 @@ int generateRandomPuzzle() {
 		}
 	}
 
+	// TODO figure out how to populate roomIds semi-randomly
+	// Start with 'seeds' and expand them in some NSEW direction?
 	// TODO ensure that there aren't 2 1-cell rooms directly adjacent
 
 	return 999;
@@ -77,7 +79,7 @@ int augmentExistingPuzzle() {
 	int overwrittenValue = -1;
 
 	// This copy keeps track of the ground truth that the user gives us, no
-	// inferred cells.
+	// inferred cells; the canonical board.
 	Board originalBoard = cellValues;
 
 	do {
@@ -100,6 +102,7 @@ int augmentExistingPuzzle() {
 		std::tie(solved, boards) = findAllSolutions(
 			cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY,
 			VERBOSITY > 0 ? &solutionCount : nullptr);
+
 		if (!solved) {
 			std::cout << "No solutions to the current board." << std::endl;
 			if (r == -1 && c == -1) {
@@ -108,7 +111,7 @@ int augmentExistingPuzzle() {
 				std::cout << "This puzzle cannot be solved." << std::endl;
 				return 0;
 			}
-			std::cout << "Undoing previous value of " << cellValues[r][c]
+			std::cerr << "Undoing previous value of " << cellValues[r][c]
 					  << " at (" << (r + 1) << ", " << (c + 1) << ")."
 					  << std::endl;
 			originalBoard[r][c] = overwrittenValue;  // Guaranteed not to be -1.
@@ -127,14 +130,24 @@ int augmentExistingPuzzle() {
 #endif /* SIMPLE_PRINT_BOARD */
 			return 0;
 		} else {
-			int solution = 0;
-			for (const auto& board : boards) {
-				std::cout << "Solution " << ++solution << ":" << std::endl;
-				printBoard(board, roomIds);
+			switch (VERBOSITY) {
+				case 2:
+				case 1: {
+					int solution = 1;
+					for (const auto& board : boards) {
+						std::cout << "Solution " << solution++ << ":"
+								  << std::endl;
+						printBoard(board, roomIds);
+					}
+				}
+				default:
+					break;
 			}
+
 			// Now that we've computed all the possible solutions, we can look
 			// at what cells are the same across every one of them.
 			// TODO is this valid to assume that these are "known"? Pretty sure.
+			int canonicalCells = countKnownCells(originalBoard);
 			int beforeAggregation = countKnownCells(cellValues);
 			std::cout << "Currently known cell values:" << std::endl;
 			printBoard(cellValues, roomIds);
@@ -144,22 +157,28 @@ int augmentExistingPuzzle() {
 			cellValues = aggregateBoards(boards);
 			int afterAggregation = countKnownCells(cellValues);
 			int aggregationDifference = afterAggregation - beforeAggregation;
+
 			if (aggregationDifference > 0) {
 				std::tie(roomMap, cellsCompletedInRoom) =
 					generateRoomMapAndCompletedCellMap(cellValues, roomIds);
-				std::cout << "Determined " << aggregationDifference
-						  << " more known cell"
-						  << (aggregationDifference == 1 ? "" : "s")
-						  << " after aggregating all solutions." << std::endl;
 				std::cout << "Currently known cell values:" << std::endl;
 				printBoard(cellValues, roomIds);
 			} else {
 				std::cout << "No new known cells after aggregation."
 						  << std::endl;
 			}
+
+			// General difficulty-esque info
 			std::cout << "There " << (afterAggregation == 1 ? "is" : "are")
 					  << " currently " << afterAggregation << " known cell"
-					  << (afterAggregation == 1 ? "" : "s") << "." << std::endl;
+					  << (afterAggregation == 1 ? "" : "s") << ", "
+					  << canonicalCells << " of which "
+					  << (canonicalCells == 1 ? "was" : "were")
+					  << " given as input, and " << aggregationDifference
+					  << " of which "
+					  << (aggregationDifference == 1 ? "was" : "were")
+					  << " determined only after aggregating all solutions."
+					  << std::endl;
 			int unknownCells = (int)(cellValues.size() * cellValues[0].size()) -
 							   afterAggregation;
 			std::cout << "There " << (unknownCells == 1 ? "is" : "are")
@@ -183,6 +202,7 @@ int augmentExistingPuzzle() {
 			std::string raw_r;
 			std::cin >> raw_r;
 			if (raw_r == "f") {
+				// User wants all value frequencies.
 				std::cout << "Value frequencies for unknown cells:"
 						  << std::endl;
 				for (int row = 0; row < valueFrequencyForCell.size(); row++) {
@@ -206,6 +226,7 @@ int augmentExistingPuzzle() {
 				}
 				goto input;  // I solemnly swear to never use this elsewhere.
 			} else if (raw_r == "s") {
+				// User is asking for suggestions of cells to fill.
 				bool suggested = false;
 				int minFrequency = std::numeric_limits<int>::max();
 				std::vector<int> suggestedRows, suggestedCols, suggestedValues;
@@ -256,6 +277,10 @@ int augmentExistingPuzzle() {
 					}
 				}
 				if (!suggested) {
+					// Suggest all cells that had a value with the lowest
+					// frequency seen across all solutions. This obviously
+					// exists, even if we didn't suggest something smarter from
+					// above.
 					for (int i = 0; i < suggestedRows.size(); i++) {
 						std::cout << "Cell (" << suggestedRows[i] + 1 << ", "
 								  << suggestedCols[i] + 1
@@ -268,6 +293,7 @@ int augmentExistingPuzzle() {
 				}
 				goto input;
 			} else if (raw_r == "i") {
+				// User wants the initial board state.
 				std::cout << "Current initial board:" << std::endl;
 				printBoard(originalBoard, roomIds);
 				goto input;
@@ -279,6 +305,7 @@ int augmentExistingPuzzle() {
 				std::cerr << "Invalid input." << std::endl;
 				goto input_r;
 			}
+			// User input a row to modify.
 			r = std::stoi(raw_r);
 			r--;
 			if (r < 0 || r >= cellValues.size()) {
@@ -304,34 +331,41 @@ int augmentExistingPuzzle() {
 						  << " in this cell: " << valueAndFrequency.second
 						  << std::endl;
 			}
-			overwrittenValue = cellValues[r][c];
+			overwrittenValue = originalBoard[r][c];
 		input_value:
 			std::cout << "Enter new value (0 clears the cell, "
 					  << overwrittenValue
 					  << " is the current value, -1 to cancel and choose a "
 						 "different cell): ";
 			std::cin >> newValue;
+
 			if (newValue == -1) {
 				goto input;  // The more I use it, the more useful it seems...
 			} else if (newValue < 0 ||
 					   newValue > roomMap[roomIds[r][c]].size()) {
 				std::cerr << "Invalid value." << std::endl;
 				goto input_value;  // What is the world coming to??
-			} else if (newValue == overwrittenValue) {
-				std::cerr << "That value already in place." << std::endl;
-				goto input_value;  // Pretty sure I'm going to hell for this.
-			} else if (newValue == 0 && originalBoard[r][c] == 0) {
+			} else if (newValue == 0 && overwrittenValue == 0 &&
+					   cellValues[r][c] != 0) {
 				std::cerr << "This cell was inferred, not set by the user. "
 							 "Clearing it will have no effect."
 						  << std::endl;
 				goto input_value;
+				// If the user attempts to override an inferred value with some
+				// other non-zero value, the solver will most likely fail and
+				// undo it automatically. I have yet to find an instance that
+				// won't cause this to happen.
+			} else if (newValue == overwrittenValue) {
+				std::cerr << "That value already in place." << std::endl;
+				goto input_value;  // Pretty sure I'm going to hell for this.
 			}
+
 			if (newValue == 0) {
 				cellsCompletedInRoom[roomIds[r][c]]--;
 			} else {
 				cellsCompletedInRoom[roomIds[r][c]]++;
 			}
-			originalBoard[r][c] = newValue;
+			originalBoard[r][c] = newValue;  // This is canonical input.
 		}
 	} while (true);
 }
@@ -340,18 +374,16 @@ int main(void) {
 	std::cout
 		<< "Generate random puzzle (g) or augment existing instance (a)? ";
 	char choice = 'a';
-	while (true) {
-		// std::cin >> choice;
-		switch (choice) {
-			case 'g':
-			case 'G':
-				// TODO unimplemented
-				return generateRandomPuzzle();
-			case 'a':
-			case 'A':
-				return augmentExistingPuzzle();
-			default:
-				std::cerr << "Invalid choice. Enter 'g' or 'a'... ";
-		}
+	// std::cin >> choice;
+	switch (choice) {
+		case 'g':
+		case 'G':
+			// TODO unimplemented
+			return generateRandomPuzzle();
+		case 'a':
+		case 'A':
+			return augmentExistingPuzzle();
+		default:
+			std::cerr << "Invalid choice. Enter 'g' or 'a'... ";
 	}
 }
