@@ -108,13 +108,18 @@ std::pair<bool, std::set<Board>> findAllSolutions(
 	Board /* intentional copy */ cellValues, const Board& roomIds,
 	const RoomMap& roomMap,
 	std::map<int, int> /* intentional copy */ cellsCompletedInRoom,
-	int VERBOSITY) {
+	int VERBOSITY, int* solutionCount) {
 	// First, complete the things we know for sure.
 	fillKnownCellsInBoard(cellValues, roomIds, roomMap, cellsCompletedInRoom,
 						  VERBOSITY);
 
 	// At this point, we're either done the puzzle or need to branch.
 	if (validateCompleteBoard(cellValues, roomIds, roomMap)) {
+		if (solutionCount) {
+			std::cout << "Found " << ++*solutionCount << " solution"
+					  << (*solutionCount == 1 ? "" : "s") << " so far."
+					  << std::endl;
+		}
 		return {true, {cellValues}};
 	}
 
@@ -171,9 +176,9 @@ std::pair<bool, std::set<Board>> findAllSolutions(
 						default:
 							break;
 					}
-					const auto& resultAndBoards =
-						findAllSolutions(cellValues, roomIds, roomMap,
-										 cellsCompletedInRoom, VERBOSITY);
+					const auto& resultAndBoards = findAllSolutions(
+						cellValues, roomIds, roomMap, cellsCompletedInRoom,
+						VERBOSITY, solutionCount);
 					if (resultAndBoards.first) {
 						// We have valid completions.
 						branchCompletions.insert(resultAndBoards.second.begin(),
@@ -186,8 +191,10 @@ std::pair<bool, std::set<Board>> findAllSolutions(
 			// We've exhausted every possibility for this cell without finding
 			// a valid one, which means either this board is unsolvable or we
 			// branched incorrectly somewhere up the call stack.
+			goto done;  // Java's `break label` functionality would be nice.
 		}
 	}
+done:
 	return {branchCompletions.size() > 0, branchCompletions};
 }
 

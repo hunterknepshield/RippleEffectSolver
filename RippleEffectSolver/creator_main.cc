@@ -83,41 +83,10 @@ int augmentExistingPuzzle() {
 
 		std::cout << "Computing all solutions to the current board..."
 				  << std::endl;
-		bool* otherThreadFinished = new bool(false);
-		// A cute little thread to only print the "this is taking a while"
-		// message if it's actually taking a while. Cleans up after itself.
-		std::thread printerThread([otherThreadFinished]() {
-			// Prints a message about long-running operations after 10 seconds
-			// if we're still computing all the solutions.
-			std::this_thread::sleep_for(std::chrono::seconds(10));
-			if (*otherThreadFinished) {
-				// The main thread found all solutions before now and finished
-				// already, so we need to clean up.
-				delete otherThreadFinished;
-			} else {
-				// The main thread isn't done computing all the solutions yet,
-				// so we let it clean up instead.
-				*otherThreadFinished = true;
-				std::cout << "If this takes a really long time, consider "
-							 "filling in more cells and rerunning."
-						  << std::endl;
-			}
-		});
+		int solutionCount = 0;
 		std::tie(solved, boards) = findAllSolutions(
-			cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
-		if (*otherThreadFinished) {
-			// The printer thread finished before us, so we clean up.
-			delete otherThreadFinished;
-		} else {
-			// This finished before the printer thread, so we tell it we're done
-			// and it will clean up.
-			*otherThreadFinished = true;
-			// Detach so we don't cause any issues when the stack variable goes
-			// out of scope. C++11's threads don't support interrupts so this is
-			// the best we can do. May cause minor memory leaks if the printer
-			// thread gets killed by an exit before it deletes the bool.
-			printerThread.detach();
-		}
+			cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY,
+			VERBOSITY > 0 ? &solutionCount : nullptr);
 		if (boards.size() == 0) {
 			std::cout << "No solutions to the current board." << std::endl;
 			if (r == -1 && c == -1) {
@@ -192,12 +161,15 @@ int main(void) {
 	char choice = 'a';
 	while (true) {
 		// std::cin >> choice;
-		if (choice == 'g' || choice == 'G') {
-			return generateRandomPuzzle();
-		} else if (choice == 'a' || choice == 'A') {
-			return augmentExistingPuzzle();
-		} else {
-			std::cerr << "Invalid choice. Enter 'g' or 'a'... ";
+		switch (choice) {
+			case 'g':
+			case 'G':
+				return generateRandomPuzzle();
+			case 'a':
+			case 'A':
+				return augmentExistingPuzzle();
+			default:
+				std::cerr << "Invalid choice. Enter 'g' or 'a'... ";
 		}
 	}
 }

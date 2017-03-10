@@ -26,12 +26,14 @@ std::pair<bool, Board> findSingleSolution(
 	int verbosity);
 
 // Uses the same logic as above, but returns only once all valid solutions to
-// the supplied board are found.
+// the supplied board are found. If `solutionCount` is not null, a message will
+// print with the current total number of solutions found every time a new
+// valid configuration is found.
 std::pair<bool, std::set<Board>> findAllSolutions(
 	Board /* intentional copy */ cellValues, const Board& roomIds,
 	const RoomMap& roomMap,
 	std::map<int, int> /* intentional copy */ cellsCompletedInRoom,
-	int verbosity);
+	int verbosity, int* solutionCount = nullptr);
 
 // Loops over a particular room until no cells can be filled in with 100%
 // certainty. Returns the number of cells filled in.
