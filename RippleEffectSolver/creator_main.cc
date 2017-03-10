@@ -179,8 +179,7 @@ int augmentExistingPuzzle() {
 					}
 				}
 				goto input;  // I solemnly swear to never use this elsewhere.
-			}
-			if (raw_r.empty() ||
+			} else if (raw_r.empty() ||
 				!std::accumulate(raw_r.begin(), raw_r.end(), true,
 								 [](bool so_far, char c) {
 									 return so_far && std::isdigit(c);
@@ -203,6 +202,7 @@ int augmentExistingPuzzle() {
 				std::cerr << "Invalid column." << std::endl;
 				goto input_c;  // Oh my...
 			}
+
 			std::cout << "Value frequency for cell (" << r + 1 << ", " << c + 1
 					  << "):" << std::endl;
 			const auto& valueFrequency = valueFrequencyForCell.at({r, c});
@@ -253,6 +253,7 @@ int main(void) {
 		switch (choice) {
 			case 'g':
 			case 'G':
+				// TODO unimplemented
 				return generateRandomPuzzle();
 			case 'a':
 			case 'A':
