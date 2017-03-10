@@ -193,7 +193,7 @@ int augmentExistingPuzzle() {
 			const auto& valueFrequencyForCell =
 				generateValueFrequencies(boards);
 
-			// Now ask for a cell to overwrite.
+		// Now ask for a cell to overwrite.
 		input:
 			std::cout << "Choose a cell to overwrite..." << std::endl;
 		input_r:
