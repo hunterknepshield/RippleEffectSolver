@@ -41,6 +41,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5A0935F81E7356D0007EF7E8 /* GeneratedPuzzle3.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = GeneratedPuzzle3.txt; sourceTree = "<group>"; };
+		5A0935F91E7356E4007EF7E8 /* GeneratedSolution3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeneratedSolution3.txt; sourceTree = "<group>"; };
+		5A0935FA1E735819007EF7E8 /* GeneratedPuzzle2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeneratedPuzzle2.txt; sourceTree = "<group>"; };
+		5A0935FB1E735829007EF7E8 /* GeneratedSolution2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeneratedSolution2.txt; sourceTree = "<group>"; };
+		5A0935FC1E735833007EF7E8 /* GeneratedPuzzle1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeneratedPuzzle1.txt; sourceTree = "<group>"; };
+		5A0935FD1E73583F007EF7E8 /* GeneratedSolution1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeneratedSolution1.txt; sourceTree = "<group>"; };
 		5A4328331E568D82001FB223 /* Puzzle4.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Puzzle4.txt; sourceTree = "<group>"; };
 		5A4328341E568D8C001FB223 /* Solution4.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Solution4.txt; sourceTree = "<group>"; };
 		5A4328371E56A451001FB223 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
@@ -135,6 +141,12 @@
 				5A4328341E568D8C001FB223 /* Solution4.txt */,
 				5AE862031E727282000F8BFD /* MultipleSolutions1.txt */,
 				5AB016BC1E6D202A00109D69 /* MultipleSolutions2.txt */,
+				5A0935FC1E735833007EF7E8 /* GeneratedPuzzle1.txt */,
+				5A0935FD1E73583F007EF7E8 /* GeneratedSolution1.txt */,
+				5A0935FA1E735819007EF7E8 /* GeneratedPuzzle2.txt */,
+				5A0935FB1E735829007EF7E8 /* GeneratedSolution2.txt */,
+				5A0935F81E7356D0007EF7E8 /* GeneratedPuzzle3.txt */,
+				5A0935F91E7356E4007EF7E8 /* GeneratedSolution3.txt */,
 			);
 			name = Puzzles;
 			sourceTree = "<group>";

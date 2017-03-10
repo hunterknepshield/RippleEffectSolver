@@ -123,6 +123,10 @@ int augmentExistingPuzzle() {
 			// stuff then we're done.
 			std::cout << "Single solution to the current board:" << std::endl;
 			printBoard(*boards.begin(), roomIds);
+#ifndef SIMPLE_PRINT_BOARD
+			std::cout << "Raw solution:" << std::endl;
+			uglyPrintBoard(*boards.begin(), roomIds);
+#endif /* SIMPLE_PRINT_BOARD */
 			std::cout << "Initial board:" << std::endl;
 			printBoard(originalBoard, roomIds);
 #ifndef SIMPLE_PRINT_BOARD
@@ -272,8 +276,11 @@ int augmentExistingPuzzle() {
 									<< "Cell (" << row + 1 << ", " << col + 1
 									<< ") can be filled with a value of "
 									<< valueAndFrequency.first
-									<< " to eliminate >90% of other solutions."
-									<< std::endl;
+									<< " to eliminate "
+									<< boards.size() - valueAndFrequency.second
+									<< " other solutions, leaving "
+									<< valueAndFrequency.second
+									<< " remaining solutions." << std::endl;
 								suggested = true;
 							}
 						}
@@ -290,7 +297,8 @@ int augmentExistingPuzzle() {
 								  << ") can be filled with a value of "
 								  << suggestedValues[i]
 								  << " to eliminate the largest number of "
-									 "other solutions."
+									 "other solutions, leaving "
+								  << minFrequency << " remaining solutions."
 								  << std::endl;
 					}
 				}
@@ -377,8 +385,8 @@ int augmentExistingPuzzle() {
 }
 
 int main(void) {
-	std::cout
-		<< "Generate random puzzle (g) or augment existing instance (a)? ";
+	//	std::cout
+	//		<< "Generate random puzzle (g) or augment existing instance (a)? ";
 	char choice = 'a';
 	// std::cin >> choice;
 	switch (choice) {
