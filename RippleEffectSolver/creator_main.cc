@@ -10,6 +10,7 @@
 #include <map>
 #include <numeric>
 #include <utility>
+#include <vector>
 
 #include "print_board.h"
 #include "read_input.h"
@@ -206,6 +207,8 @@ int augmentExistingPuzzle() {
 				goto input;  // I solemnly swear to never use this elsewhere.
 			} else if (raw_r == "s") {
 				bool suggested = false;
+				int minFrequency = std::numeric_limits<int>::max();
+				std::vector<int> suggestedRows, suggestedCols, suggestedValues;
 				for (int row = 0; row < valueFrequencyForCell.size(); row++) {
 					for (int col = 0; col < valueFrequencyForCell[row].size();
 						 col++) {
@@ -215,6 +218,22 @@ int augmentExistingPuzzle() {
 
 						for (const auto& valueAndFrequency :
 							 valueFrequencyForCell[row][col]) {
+							if (valueAndFrequency.second < minFrequency) {
+								minFrequency = valueAndFrequency.second;
+								suggestedRows.clear();
+								suggestedCols.clear();
+								suggestedValues.clear();
+								suggestedRows.push_back(row);
+								suggestedCols.push_back(col);
+								suggestedValues.push_back(
+									valueAndFrequency.first);
+							} else if (valueAndFrequency.second ==
+									   minFrequency) {
+								suggestedRows.push_back(row);
+								suggestedCols.push_back(col);
+								suggestedValues.push_back(
+									valueAndFrequency.first);
+							}
 							if (valueAndFrequency.second == 1) {
 								std::cout
 									<< "Cell (" << row + 1 << ", " << col + 1
@@ -237,9 +256,15 @@ int augmentExistingPuzzle() {
 					}
 				}
 				if (!suggested) {
-					std::cout << "No current suggestions. Try 'f' to display "
-								 "value frequencies for all unknown cells."
-							  << std::endl;
+					for (int i = 0; i < suggestedRows.size(); i++) {
+						std::cout << "Cell (" << suggestedRows[i] + 1 << ", "
+								  << suggestedCols[i] + 1
+								  << ") can be filled with a value of "
+								  << suggestedValues[i]
+								  << " to eliminate the largest number of "
+									 "other solutions."
+								  << std::endl;
+					}
 				}
 				goto input;
 			} else if (raw_r == "i") {
