@@ -31,12 +31,8 @@ int generateRandomPuzzle() {
 
 	Board cellValues, roomIds;
 	for (int r = 0; r < height; r++) {
-		cellValues.emplace_back();
-		roomIds.emplace_back();
-		for (int c = 0; c < width; c++) {
-			cellValues[r].emplace_back();
-			roomIds[r].emplace_back();
-		}
+		cellValues.emplace_back(width);
+		roomIds.emplace_back(width);
 	}
 
 	// TODO figure out how to populate roomIds semi-randomly
@@ -84,7 +80,9 @@ int augmentExistingPuzzle() {
 
 	do {
 		// Wipe out any cells that we filled in without the user specifying a
-		// value.
+		// value. This prevents issues with things like the user attempting to
+		// overwrite an inferred cell, which might produce a bad (read:
+		// unsolvable) puzzle state.
 		cellValues = originalBoard;
 		std::tie(roomMap, cellsCompletedInRoom) =
 			generateRoomMapAndCompletedCellMap(cellValues, roomIds);
@@ -104,6 +102,7 @@ int augmentExistingPuzzle() {
 			VERBOSITY > 0 ? &solutionCount : nullptr);
 
 		if (!solved) {
+			// We've run into a dead end. Undo if we can, otherwise fail.
 			std::cout << "No solutions to the current board." << std::endl;
 			if (r == -1 && c == -1) {
 				// We didn't even modify anything, this is just unsolvable based
@@ -120,6 +119,8 @@ int augmentExistingPuzzle() {
 			c = -1;
 			overwrittenValue = -1;
 		} else if (boards.size() == 1) {
+			// We've finally reached a single solution. Dump out the pertinent
+			// stuff then we're done.
 			std::cout << "Single solution to the current board:" << std::endl;
 			printBoard(*boards.begin(), roomIds);
 			std::cout << "Initial board:" << std::endl;
@@ -130,6 +131,9 @@ int augmentExistingPuzzle() {
 #endif /* SIMPLE_PRINT_BOARD */
 			return 0;
 		} else {
+			// This is the longest case by far. We have multiple solutions.
+			// First, give the user some info like what we know for sure,
+			// then ask them to modify a cell and loop.
 			switch (VERBOSITY) {
 				case 2:
 				case 1: {
@@ -146,7 +150,6 @@ int augmentExistingPuzzle() {
 
 			// Now that we've computed all the possible solutions, we can look
 			// at what cells are the same across every one of them.
-			// TODO is this valid to assume that these are "known"? Pretty sure.
 			int canonicalCells = countKnownCells(originalBoard);
 			int beforeAggregation = countKnownCells(cellValues);
 			std::cout << "Currently known cell values:" << std::endl;
@@ -190,7 +193,7 @@ int augmentExistingPuzzle() {
 			const auto& valueFrequencyForCell =
 				generateValueFrequencies(boards);
 
-			int newValue;
+			// Now ask for a cell to overwrite.
 		input:
 			std::cout << "Choose a cell to overwrite..." << std::endl;
 		input_r:
@@ -305,13 +308,14 @@ int augmentExistingPuzzle() {
 				std::cerr << "Invalid input." << std::endl;
 				goto input_r;
 			}
-			// User input a row to modify.
+			// User gave a row to modify.
 			r = std::stoi(raw_r);
 			r--;
 			if (r < 0 || r >= cellValues.size()) {
 				std::cerr << "Invalid row." << std::endl;
 				goto input_r;  // Gasp!
 			}
+
 		input_c:
 			std::cout << "Enter cell's column (1-" << cellValues[r].size()
 					  << "): ";
@@ -331,7 +335,9 @@ int augmentExistingPuzzle() {
 						  << " in this cell: " << valueAndFrequency.second
 						  << std::endl;
 			}
+
 			overwrittenValue = originalBoard[r][c];
+			int newValue;
 		input_value:
 			std::cout << "Enter new value (0 clears the cell, "
 					  << overwrittenValue
