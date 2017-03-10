@@ -4,11 +4,11 @@
 Ripple effect is a Nikoli puzzle, see
 http://nikoli.com/en/puzzles/ripple_effect/ for more info.
 
-A board is divided into rooms of contiguous cells. Each room's must be filled
-with a number from 1 to n, where n is the number of cells in the room. Cells
-reachable in a cardinal direction from each other must either contain different
-values, or must have at least that many spaces between them if they contain the
-same value.
+A board is divided into rooms of contiguous cells. Each room's cells must be
+filled with a number from 1 to n, where n is the number of cells in the room.
+Cells reachable in a cardinal direction from each other must either contain
+different values or must have at least that many spaces between them if they
+contain the same value.
 
 ## Solving Strategies
 The solver first iterates over the board's rooms, filling in any cell it can
