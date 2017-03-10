@@ -153,11 +153,11 @@ int augmentExistingPuzzle() {
 			std::cout << "Choose a cell to overwrite..." << std::endl;
 		input_r:
 			std::cout << "Enter cell's row (1-" << cellValues.size()
-					  << ", '?' to display value frequencies for all unknown "
-						 "cells): ";
+					  << ", 'f' to display value frequencies for all unknown "
+						 "cells, 's' to display suggested cells to modify): ";
 			std::string raw_r;
 			std::cin >> raw_r;
-			if (raw_r == "?") {
+			if (raw_r == "f") {
 				std::cout << "Value frequencies for unknown cells:"
 						  << std::endl;
 				for (const auto& cellAndValueFrequency :
@@ -179,11 +179,48 @@ int augmentExistingPuzzle() {
 					}
 				}
 				goto input;  // I solemnly swear to never use this elsewhere.
+			} else if (raw_r == "s") {
+				bool suggested = false;
+				for (const auto& cellAndValueFrequency :
+					 valueFrequencyForCell) {
+					if (cellAndValueFrequency.second.size() == 1)
+						continue;  // This is a known cell, we don't need to
+					// bother printing this out.
+					const auto& cellLocation = cellAndValueFrequency.first;
+					for (const auto& valueAndFrequency :
+						 cellAndValueFrequency.second) {
+						if (valueAndFrequency.second == 1) {
+							std::cout << "Cell (" << cellLocation.first + 1
+									  << ", " << cellLocation.second + 1
+									  << ") can be filled with a value of "
+									  << valueAndFrequency.first
+									  << " to eliminate all other solutions."
+									  << std::endl;
+							suggested = true;
+						} else if (valueAndFrequency.second <=
+								   boards.size() / 10) {
+							std::cout
+								<< "Cell (" << cellLocation.first + 1 << ", "
+								<< cellLocation.second + 1
+								<< ") can be filled with a value of "
+								<< valueAndFrequency.first
+								<< " to eliminate >90% of other solutions."
+								<< std::endl;
+							suggested = true;
+						}
+					}
+				}
+				if (!suggested) {
+					std::cout << "No current suggestions. Try 'f' to display "
+								 "value frequencies for all unknown cells."
+							  << std::endl;
+				}
+				goto input;
 			} else if (raw_r.empty() ||
-				!std::accumulate(raw_r.begin(), raw_r.end(), true,
-								 [](bool so_far, char c) {
-									 return so_far && std::isdigit(c);
-								 })) {
+					   !std::accumulate(raw_r.begin(), raw_r.end(), true,
+										[](bool so_far, char c) {
+											return so_far && std::isdigit(c);
+										})) {
 				std::cerr << "Invalid input." << std::endl;
 				goto input_r;
 			}
