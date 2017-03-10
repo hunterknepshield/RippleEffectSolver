@@ -119,7 +119,7 @@ int augmentExistingPuzzle() {
 			std::cout << "Aggregating cells across all solutions to see if we "
 						 "know anything else..."
 					  << std::endl;
-			cellValues = findAllSharedValues(boards);
+			cellValues = aggregateBoards(boards);
 			int afterAggregation = countKnownCells(cellValues);
 			int aggregationDifference = afterAggregation - beforeAggregation;
 			if (aggregationDifference > 0) {
@@ -137,12 +137,12 @@ int augmentExistingPuzzle() {
 						  << std::endl;
 			}
 			std::cout << "There " << (afterAggregation == 1 ? "is" : "are")
-					  << "currently " << afterAggregation << " known cell"
+					  << " currently " << afterAggregation << " known cell"
 					  << (afterAggregation == 1 ? "" : "s") << "." << std::endl;
 			int unknownCells = (int)(cellValues.size() * cellValues[0].size()) -
 							   afterAggregation;
 			std::cout << "There " << (unknownCells == 1 ? "is" : "are")
-					  << "currently " << unknownCells << " unknown cell"
+					  << " currently " << unknownCells << " unknown cell"
 					  << (unknownCells == 1 ? "" : "s") << "." << std::endl;
 			std::cout << "The puzzle currently has " << boards.size()
 					  << " solutions." << std::endl;

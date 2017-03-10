@@ -198,7 +198,7 @@ done:
 	return {branchCompletions.size() > 0, branchCompletions};
 }
 
-Board findAllSharedValues(const std::set<Board>& boards) {
+Board aggregateBoards(const std::set<Board>& boards) {
 	// We copy the first board, then clear inconsistent cells from there.
 	Board aggregate = *boards.begin();
 	for (const auto& board : boards) {

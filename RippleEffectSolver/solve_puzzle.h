@@ -38,7 +38,7 @@ std::pair<bool, std::set<Board>> findAllSolutions(
 // Scans all supplied boards, returning an aggregate board containing only
 // values that appear the same in every single one. Assumes that at least one
 // board is supplied.
-Board findAllSharedValues(const std::set<Board>& boards);
+Board aggregateBoards(const std::set<Board>& boards);
 
 // Loops over a particular room until no cells can be filled in with 100%
 // certainty. Returns the number of cells filled in.
