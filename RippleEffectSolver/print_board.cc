@@ -14,20 +14,17 @@
 
 #include "typedefs.h"
 
-#ifdef SIMPLE_PRINT_BOARD
-
-// The ugly, simple version of the printing routine. Doesn't show room borders,
-// just cells' values.
-void printBoard(const Board& cellValues, const Board& /* unused */ roomIds) {
-	for (const auto& row : cellValues) {
-		for (int c = 0; c < row.size() - 1; c++) {
-			std::cout << row[c] << ' ';
+void uglyPrintBoard(const Board& cellValues, const Board& roomIds) {
+	for (const auto& board : {cellValues, roomIds}) {
+		for (const auto& row : board) {
+			for (int c = 0; c < row.size() - 1; c++) {
+				std::cout << row[c] << ' ';
+			}
+			std::cout << row.back() << std::endl;
 		}
-		std::cout << row.back() << std::endl;
+		std::cout << std::endl;
 	}
 }
-
-#else /* !SIMPLE_PRINT_BOARD */
 
 // String constants for easy usage. N > S > E > W in names.
 // Also #define'd away since they need the weird scary string types because
@@ -44,10 +41,7 @@ void printBoard(const Board& cellValues, const Board& /* unused */ roomIds) {
 #define NEW "┴"
 #define NSEW "┼"
 
-// The pretty version of the board printing routine. Uses special Unicode
-// characters to show room borders in addition to the cells' values. However,
-// these characters don't play nice with all fonts.
-void printBoard(const Board& cellValues, const Board& roomIds) {
+void prettyPrintBoard(const Board& cellValues, const Board& roomIds) {
 	// Top row of board symbols.
 	std::cout << SE;
 	for (int c = 0; c < cellValues[0].size() - 1; c++) {
@@ -195,5 +189,3 @@ void printBoard(const Board& cellValues, const Board& roomIds) {
 	}
 	std::cout << EW << NW << std::endl;
 }
-
-#endif /* SIMPLE_PRINT_BOARD */

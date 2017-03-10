@@ -6,7 +6,6 @@
 //  Copyright © 2017 Hunter Knepshield. All rights reserved.
 //
 
-#include <chrono>
 #include <iostream>
 #include <map>
 #include <numeric>
@@ -68,13 +67,20 @@ int augmentExistingPuzzle() {
 	// To get the value of cell (r, c), use cellValues[r][c].
 	// To get the room ID of cell (r, c), use roomIds[r][c].
 
-	bool solved;
-	std::set<Board> boards;
-	// The position of the previously modified cell within the loop below.
+	// The position of the last modified cell within the loop below.
 	int r = -1, c = -1;
 	int overwrittenValue = -1;
 
+	// This copy keeps track of the ground truth that the user gives us, no
+	// inferred cells.
+	Board originalBoard = cellValues;
+
 	do {
+		// Wipe out any cells that we filled in without the user specifying a
+		// value.
+		cellValues = originalBoard;
+		std::tie(roomMap, cellsCompletedInRoom) =
+			generateRoomMapAndCompletedCellMap(cellValues, roomIds);
 		// Figure out what we know for sure right now.
 		fillKnownCellsInBoard(cellValues, roomIds, roomMap,
 							  cellsCompletedInRoom, VERBOSITY);
@@ -83,11 +89,13 @@ int augmentExistingPuzzle() {
 
 		std::cout << "Computing all solutions to the current board..."
 				  << std::endl;
+		bool solved;
+		std::set<Board> boards;
 		int solutionCount = 0;
 		std::tie(solved, boards) = findAllSolutions(
 			cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY,
 			VERBOSITY > 0 ? &solutionCount : nullptr);
-		if (boards.size() == 0) {
+		if (!solved) {
 			std::cout << "No solutions to the current board." << std::endl;
 			if (r == -1 && c == -1) {
 				// We didn't even modify anything, this is just unsolvable based
@@ -98,11 +106,20 @@ int augmentExistingPuzzle() {
 			std::cout << "Undoing previous value of " << cellValues[r][c]
 					  << " at (" << (r + 1) << ", " << (c + 1) << ")."
 					  << std::endl;
-			cellValues[r][c] = overwrittenValue;  // Guaranteed not to be -1.
+			originalBoard[r][c] = overwrittenValue;  // Guaranteed not to be -1.
 			cellsCompletedInRoom[roomIds[r][c]]--;
+			r = -1;
+			c = -1;
+			overwrittenValue = -1;
 		} else if (boards.size() == 1) {
 			std::cout << "Single solution to the current board:" << std::endl;
 			printBoard(*boards.begin(), roomIds);
+			std::cout << "Initial board:" << std::endl;
+			printBoard(originalBoard, roomIds);
+#ifndef SIMPLE_PRINT_BOARD
+			std::cout << "Raw initial board:" << std::endl;
+			uglyPrintBoard(originalBoard, roomIds);
+#endif /* SIMPLE_PRINT_BOARD */
 			return 0;
 		} else {
 			int solution = 0;
@@ -116,8 +133,8 @@ int augmentExistingPuzzle() {
 			int beforeAggregation = countKnownCells(cellValues);
 			std::cout << "Currently known cell values:" << std::endl;
 			printBoard(cellValues, roomIds);
-			std::cout << "Aggregating cells across all solutions to see if we "
-						 "know anything else..."
+			std::cout << "Aggregating cells across all solutions to see if any "
+						 "other cells are known..."
 					  << std::endl;
 			cellValues = aggregateBoards(boards);
 			int afterAggregation = countKnownCells(cellValues);
@@ -154,7 +171,9 @@ int augmentExistingPuzzle() {
 		input_r:
 			std::cout << "Enter cell's row (1-" << cellValues.size()
 					  << ", 'f' to display value frequencies for all unknown "
-						 "cells, 's' to display suggested cells to modify): ";
+						 "cells, 's' to display suggested cells to modify, 'i' "
+						 "to display initial board state [i.e. only what the "
+						 "user has supplied as input]): ";
 			std::string raw_r;
 			std::cin >> raw_r;
 			if (raw_r == "f") {
@@ -216,6 +235,10 @@ int augmentExistingPuzzle() {
 							  << std::endl;
 				}
 				goto input;
+			} else if (raw_r == "i") {
+				std::cout << "Current initial board:" << std::endl;
+				printBoard(originalBoard, roomIds);
+				goto input;
 			} else if (raw_r.empty() ||
 					   !std::accumulate(raw_r.begin(), raw_r.end(), true,
 										[](bool so_far, char c) {
@@ -265,18 +288,18 @@ int augmentExistingPuzzle() {
 			} else if (newValue == overwrittenValue) {
 				std::cerr << "That value already in place." << std::endl;
 				goto input_value;  // Pretty sure I'm going to hell for this.
+			} else if (newValue == 0 && originalBoard[r][c] == 0) {
+				std::cerr << "This cell was inferred, not set by the user. "
+							 "Clearing it will have no effect."
+						  << std::endl;
+				goto input_value;
 			}
 			if (newValue == 0) {
-				// Warn the user just in case.
-				std::cout << "Warning! Overwriting already-known cells may "
-							 "invalidate other already-known cells, but that "
-							 "will not be reflected here."
-						  << std::endl;
 				cellsCompletedInRoom[roomIds[r][c]]--;
 			} else {
 				cellsCompletedInRoom[roomIds[r][c]]++;
 			}
-			cellValues[r][c] = newValue;
+			originalBoard[r][c] = newValue;
 		}
 	} while (true);
 }
