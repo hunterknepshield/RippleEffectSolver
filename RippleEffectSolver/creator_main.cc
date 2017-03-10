@@ -28,13 +28,17 @@ int generateRandomPuzzle() {
 	std::cout << "Specify the height of the puzzle to be created... ";
 	std::cin >> height;
 
-	// TODO
 	Board cellValues, roomIds;
-	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < width; j++) {
-			// cellValues[i][j];
+	for (int r = 0; r < height; r++) {
+		cellValues.emplace_back();
+		roomIds.emplace_back();
+		for (int c = 0; c < width; c++) {
+			cellValues[r].emplace_back();
+			roomIds[r].emplace_back();
 		}
 	}
+	
+	// TODO ensure that there aren't 2 1-cell rooms directly adjacent
 
 	return 999;
 }
