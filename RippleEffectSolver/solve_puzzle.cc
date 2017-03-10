@@ -198,6 +198,21 @@ done:
 	return {branchCompletions.size() > 0, branchCompletions};
 }
 
+Board findAllSharedValues(const std::set<Board>& boards) {
+	// We copy the first board, then clear inconsistent cells from there.
+	Board aggregate = *boards.begin();
+	for (const auto& board : boards) {
+		for (int r = 0; r < aggregate.size(); r++) {
+			for (int c = 0; c < aggregate[r].size(); c++) {
+				if (aggregate[r][c] && aggregate[r][c] != board[r][c]) {
+					aggregate[r][c] = 0;
+				}
+			}
+		}
+	}
+	return aggregate;
+}
+
 int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 						 const CellList& cellsInRoom, int VERBOSITY) {
 	int cellsFilled = 0;
@@ -359,4 +374,16 @@ std::pair<RoomMap, std::map<int, int>> generateRoomMapAndCompletedCellMap(
 		}
 	}
 	return {roomMap, cellsCompletedInRoom};
+}
+
+int countKnownCells(const Board& board) {
+	// There's definitely a pretty functional way to do this, but C++ makes that
+	// challenging.
+	int count = 0;
+	for (const auto& row : board) {
+		for (const auto& cellValue : row) {
+			if (cellValue) count++;
+		}
+	}
+	return count;
 }

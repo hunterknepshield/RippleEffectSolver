@@ -35,6 +35,11 @@ std::pair<bool, std::set<Board>> findAllSolutions(
 	std::map<int, int> /* intentional copy */ cellsCompletedInRoom,
 	int verbosity, int* solutionCount = nullptr);
 
+// Scans all supplied boards, returning an aggregate board containing only
+// values that appear the same in every single one. Assumes that at least one
+// board is supplied.
+Board findAllSharedValues(const std::set<Board>& boards);
+
 // Loops over a particular room until no cells can be filled in with 100%
 // certainty. Returns the number of cells filled in.
 int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
@@ -51,5 +56,8 @@ void fillKnownCellsInBoard(Board& cellValues, const Board& roomIds,
 // the other mapping room ID to the count of completed cells in the room so far.
 std::pair<RoomMap, std::map<int, int>> generateRoomMapAndCompletedCellMap(
 	const Board& cellValues, const Board& roomIds);
+
+// Counts the number of known (non-zero) cells in the current board.
+int countKnownCells(const Board& board);
 
 #endif /* solve_puzzle_h */

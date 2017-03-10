@@ -112,8 +112,32 @@ int augmentExistingPuzzle() {
 			}
 			std::cout << "The puzzle currently has " << boards.size()
 					  << " solutions." << std::endl;
+			// Now that we've computed all the possible solutions, we can look
+			// at what cells are the same across every one of them.
+			// TODO is this valid to assume that these are "known"? Pretty sure.
+			int aggregationDifference = countKnownCells(cellValues);
 			std::cout << "Currently known cell values:" << std::endl;
 			printBoard(cellValues, roomIds);
+			std::cout << "Aggregating cells across all solutions to see if we "
+						 "know anything else..."
+					  << std::endl;
+			cellValues = findAllSharedValues(boards);
+			aggregationDifference =
+				countKnownCells(cellValues) - aggregationDifference;
+			if (aggregationDifference > 0) {
+				std::tie(roomMap, cellsCompletedInRoom) =
+					generateRoomMapAndCompletedCellMap(cellValues, roomIds);
+				std::cout << "Determined " << aggregationDifference
+						  << " more known cell"
+						  << (aggregationDifference == 1 ? "" : "s")
+						  << " after aggregating possible solutions."
+						  << std::endl;
+				std::cout << "Currently known cell values:" << std::endl;
+				printBoard(cellValues, roomIds);
+			} else {
+				std::cout << "No new known cells after aggregation."
+						  << std::endl;
+			}
 			int newValue;
 		input:
 			std::cout << "Choose a value to overwrite..." << std::endl;
