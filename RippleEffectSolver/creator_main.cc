@@ -110,20 +110,18 @@ int augmentExistingPuzzle() {
 				std::cout << "Solution " << ++solution << ":" << std::endl;
 				printBoard(board, roomIds);
 			}
-			std::cout << "The puzzle currently has " << boards.size()
-					  << " solutions." << std::endl;
 			// Now that we've computed all the possible solutions, we can look
 			// at what cells are the same across every one of them.
 			// TODO is this valid to assume that these are "known"? Pretty sure.
-			int aggregationDifference = countKnownCells(cellValues);
+			int beforeAggregation = countKnownCells(cellValues);
 			std::cout << "Currently known cell values:" << std::endl;
 			printBoard(cellValues, roomIds);
 			std::cout << "Aggregating cells across all solutions to see if we "
 						 "know anything else..."
 					  << std::endl;
 			cellValues = findAllSharedValues(boards);
-			aggregationDifference =
-				countKnownCells(cellValues) - aggregationDifference;
+			int afterAggregation = countKnownCells(cellValues);
+			int aggregationDifference = afterAggregation - beforeAggregation;
 			if (aggregationDifference > 0) {
 				std::tie(roomMap, cellsCompletedInRoom) =
 					generateRoomMapAndCompletedCellMap(cellValues, roomIds);
@@ -138,6 +136,16 @@ int augmentExistingPuzzle() {
 				std::cout << "No new known cells after aggregation."
 						  << std::endl;
 			}
+			std::cout << "There " << (afterAggregation == 1 ? "is" : "are")
+					  << "currently " << afterAggregation << " known cell"
+					  << (afterAggregation == 1 ? "" : "s") << "." << std::endl;
+			int unknownCells = (int)(cellValues.size() * cellValues[0].size()) -
+							   afterAggregation;
+			std::cout << "There " << (unknownCells == 1 ? "is" : "are")
+					  << "currently " << unknownCells << " unknown cell"
+					  << (unknownCells == 1 ? "" : "s") << "." << std::endl;
+			std::cout << "The puzzle currently has " << boards.size()
+					  << " solutions." << std::endl;
 			int newValue;
 		input:
 			std::cout << "Choose a value to overwrite..." << std::endl;
