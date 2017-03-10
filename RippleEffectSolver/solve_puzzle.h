@@ -62,7 +62,7 @@ int countKnownCells(const Board& board);
 
 // Returns a mapping of cell location to the frequency of its various values
 // across all solutions supplied in `boards`.
-std::map<std::pair<int, int>, std::map<int, int>> analyzeSolutions(
+std::vector<std::vector<std::map<int, int>>> generateValueFrequencies(
 	const std::set<Board>& boards);
 
 #endif /* solve_puzzle_h */

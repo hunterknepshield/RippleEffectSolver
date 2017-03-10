@@ -37,7 +37,7 @@ int generateRandomPuzzle() {
 			roomIds[r].emplace_back();
 		}
 	}
-	
+
 	// TODO ensure that there aren't 2 1-cell rooms directly adjacent
 
 	return 999;
@@ -167,7 +167,8 @@ int augmentExistingPuzzle() {
 			std::cout << "The puzzle currently has " << boards.size()
 					  << " solutions." << std::endl;
 
-			const auto& valueFrequencyForCell = analyzeSolutions(boards);
+			const auto& valueFrequencyForCell =
+				generateValueFrequencies(boards);
 
 			int newValue;
 		input:
@@ -183,53 +184,55 @@ int augmentExistingPuzzle() {
 			if (raw_r == "f") {
 				std::cout << "Value frequencies for unknown cells:"
 						  << std::endl;
-				for (const auto& cellAndValueFrequency :
-					 valueFrequencyForCell) {
-					if (cellAndValueFrequency.second.size() == 1)
-						continue;  // This is a known cell, we don't need to
-								   // bother printing this out.
-					const auto& cellLocation = cellAndValueFrequency.first;
-					std::cout << "Value frequency for cell ("
-							  << cellLocation.first + 1 << ", "
-							  << cellLocation.second + 1 << "):" << std::endl;
-					for (const auto& valueAndFrequency :
-						 cellAndValueFrequency.second) {
-						std::cout
-							<< '\t' << "Solutions with "
-							<< valueAndFrequency.first
-							<< " in this cell: " << valueAndFrequency.second
-							<< std::endl;
+				for (int row = 0; row < valueFrequencyForCell.size(); row++) {
+					for (int col = 0; col < valueFrequencyForCell[row].size();
+						 col++) {
+						if (valueFrequencyForCell[row][col].size() == 1)
+							continue;  // This is a known cell, we don't need to
+									   // bother printing this out.
+
+						std::cout << "Value frequency for cell (" << row + 1
+								  << ", " << col + 1 << "):" << std::endl;
+						for (const auto& valueAndFrequency :
+							 valueFrequencyForCell[row][col]) {
+							std::cout
+								<< '\t' << "Solutions with "
+								<< valueAndFrequency.first
+								<< " in this cell: " << valueAndFrequency.second
+								<< std::endl;
+						}
 					}
 				}
 				goto input;  // I solemnly swear to never use this elsewhere.
 			} else if (raw_r == "s") {
 				bool suggested = false;
-				for (const auto& cellAndValueFrequency :
-					 valueFrequencyForCell) {
-					if (cellAndValueFrequency.second.size() == 1)
-						continue;  // This is a known cell, we don't need to
-					// bother printing this out.
-					const auto& cellLocation = cellAndValueFrequency.first;
-					for (const auto& valueAndFrequency :
-						 cellAndValueFrequency.second) {
-						if (valueAndFrequency.second == 1) {
-							std::cout << "Cell (" << cellLocation.first + 1
-									  << ", " << cellLocation.second + 1
-									  << ") can be filled with a value of "
-									  << valueAndFrequency.first
-									  << " to eliminate all other solutions."
-									  << std::endl;
-							suggested = true;
-						} else if (valueAndFrequency.second <=
-								   boards.size() / 10) {
-							std::cout
-								<< "Cell (" << cellLocation.first + 1 << ", "
-								<< cellLocation.second + 1
-								<< ") can be filled with a value of "
-								<< valueAndFrequency.first
-								<< " to eliminate >90% of other solutions."
-								<< std::endl;
-							suggested = true;
+				for (int row = 0; row < valueFrequencyForCell.size(); row++) {
+					for (int col = 0; col < valueFrequencyForCell[row].size();
+						 col++) {
+						if (valueFrequencyForCell[row][col].size() == 1)
+							continue;  // This is a known cell, we don't need to
+									   // bother printing this out.
+
+						for (const auto& valueAndFrequency :
+							 valueFrequencyForCell[row][col]) {
+							if (valueAndFrequency.second == 1) {
+								std::cout
+									<< "Cell (" << row + 1 << ", " << col + 1
+									<< ") can be filled with a value of "
+									<< valueAndFrequency.first
+									<< " to eliminate all other solutions."
+									<< std::endl;
+								suggested = true;
+							} else if (valueAndFrequency.second <=
+									   boards.size() / 10) {
+								std::cout
+									<< "Cell (" << row + 1 << ", " << col + 1
+									<< ") can be filled with a value of "
+									<< valueAndFrequency.first
+									<< " to eliminate >90% of other solutions."
+									<< std::endl;
+								suggested = true;
+							}
 						}
 					}
 				}
@@ -269,8 +272,8 @@ int augmentExistingPuzzle() {
 
 			std::cout << "Value frequency for cell (" << r + 1 << ", " << c + 1
 					  << "):" << std::endl;
-			const auto& valueFrequency = valueFrequencyForCell.at({r, c});
-			for (const auto& valueAndFrequency : valueFrequency) {
+			const auto& valueFrequencies = valueFrequencyForCell[r][c];
+			for (const auto& valueAndFrequency : valueFrequencies) {
 				std::cout << '\t' << "Solutions with "
 						  << valueAndFrequency.first
 						  << " in this cell: " << valueAndFrequency.second
