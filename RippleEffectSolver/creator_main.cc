@@ -9,7 +9,7 @@
 #include <chrono>
 #include <iostream>
 #include <map>
-#include <thread>
+#include <numeric>
 #include <utility>
 
 #include "print_board.h"
@@ -147,45 +147,60 @@ int augmentExistingPuzzle() {
 					  << " solutions." << std::endl;
 
 			const auto& valueFrequencyForCell = analyzeSolutions(boards);
-			switch (VERBOSITY) {
-				case 2:
-				case 1:
-					std::cout << "Value frequencies for unknown cells:" << std::endl;
-					for (const auto& cellAndValueFrequency : valueFrequencyForCell) {
-						if (cellAndValueFrequency.second.size() == 1)
-							continue;  // This is a known cell, we don't need to bother printing
-						// this out.
-						const auto& cellLocation = cellAndValueFrequency.first;
-						std::cout << "Value frequency for cell (" << cellLocation.first + 1 << ", " << cellLocation.second + 1
-						<< "):" << std::endl;
-						for (const auto& valueAndFrequency : cellAndValueFrequency.second) {
-							std::cout << '\t' << "Solutions with "
-							<< valueAndFrequency.first
-							<< " in this cell: " << valueAndFrequency.second
-							<< std::endl;
-						}
-					}
-				default:
-					break;
-			}
 
 			int newValue;
 		input:
 			std::cout << "Choose a cell to overwrite..." << std::endl;
 		input_r:
-			std::cout << "Cell's row (1-" << cellValues.size() << "): ";
-			std::cin >> r;
+			std::cout << "Enter cell's row (1-" << cellValues.size()
+					  << ", '?' to display value frequencies for all unknown "
+						 "cells): ";
+			std::string raw_r;
+			std::cin >> raw_r;
+			if (raw_r == "?") {
+				std::cout << "Value frequencies for unknown cells:"
+						  << std::endl;
+				for (const auto& cellAndValueFrequency :
+					 valueFrequencyForCell) {
+					if (cellAndValueFrequency.second.size() == 1)
+						continue;  // This is a known cell, we don't need to
+								   // bother printing this out.
+					const auto& cellLocation = cellAndValueFrequency.first;
+					std::cout << "Value frequency for cell ("
+							  << cellLocation.first + 1 << ", "
+							  << cellLocation.second + 1 << "):" << std::endl;
+					for (const auto& valueAndFrequency :
+						 cellAndValueFrequency.second) {
+						std::cout
+							<< '\t' << "Solutions with "
+							<< valueAndFrequency.first
+							<< " in this cell: " << valueAndFrequency.second
+							<< std::endl;
+					}
+				}
+				goto input;  // I solemnly swear to never use this elsewhere.
+			}
+			if (raw_r.empty() ||
+				!std::accumulate(raw_r.begin(), raw_r.end(), true,
+								 [](bool so_far, char c) {
+									 return so_far && std::isdigit(c);
+								 })) {
+				std::cerr << "Invalid input." << std::endl;
+				goto input_r;
+			}
+			r = std::stoi(raw_r);
 			r--;
 			if (r < 0 || r >= cellValues.size()) {
-				std::cerr << "Invalid location." << std::endl;
+				std::cerr << "Invalid row." << std::endl;
 				goto input_r;  // Gasp!
 			}
 		input_c:
-			std::cout << "Cell's column (1-" << cellValues[r].size() << "): ";
+			std::cout << "Enter cell's column (1-" << cellValues[r].size()
+					  << "): ";
 			std::cin >> c;
 			c--;
 			if (c < 0 || c >= boardWidth) {
-				std::cerr << "Invalid location." << std::endl;
+				std::cerr << "Invalid column." << std::endl;
 				goto input_c;  // Oh my...
 			}
 			std::cout << "Value frequency for cell (" << r + 1 << ", " << c + 1
@@ -215,6 +230,11 @@ int augmentExistingPuzzle() {
 				goto input_value;  // Pretty sure I'm going to hell for this.
 			}
 			if (newValue == 0) {
+				// Warn the user just in case.
+				std::cout << "Warning! Overwriting already-known cells may "
+							 "invalidate other already-known cells, but that "
+							 "will not be reflected here."
+						  << std::endl;
 				cellsCompletedInRoom[roomIds[r][c]]--;
 			} else {
 				cellsCompletedInRoom[roomIds[r][c]]++;
