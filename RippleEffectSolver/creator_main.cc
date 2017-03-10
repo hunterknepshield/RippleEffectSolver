@@ -105,20 +105,20 @@ int augmentExistingPuzzle() {
 			printBoard(*boards.begin(), roomIds);
 			return 0;
 		} else {
-			std::cout << "The puzzle currently has " << boards.size()
-					  << " solutions." << std::endl;
 			int solution = 0;
 			for (const auto& board : boards) {
 				std::cout << "Solution " << ++solution << ":" << std::endl;
 				printBoard(board, roomIds);
 			}
+			std::cout << "The puzzle currently has " << boards.size()
+					  << " solutions." << std::endl;
 			std::cout << "Currently known cell values:" << std::endl;
 			printBoard(cellValues, roomIds);
 			int newValue;
 		input:
 			std::cout << "Choose a value to overwrite..." << std::endl;
 		input_r:
-			std::cout << "Value's row (1-indexed): ";
+			std::cout << "Value's row (1..." << cellValues.size() << "): ";
 			std::cin >> r;
 			r--;
 			if (r < 0 || r >= cellValues.size()) {
@@ -126,7 +126,8 @@ int augmentExistingPuzzle() {
 				goto input_r;  // Gasp!
 			}
 		input_c:
-			std::cout << "Value's column (1-indexed): ";
+			std::cout << "Value's column (1..." << cellValues[r].size()
+					  << "): ";
 			std::cin >> c;
 			c--;
 			if (c < 0 || c >= boardWidth) {
