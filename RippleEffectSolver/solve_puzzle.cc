@@ -365,8 +365,6 @@ std::pair<RoomMap, std::map<int, int>> generateRoomMapAndCompletedCellMap(
 	std::map<int, int> cellsCompletedInRoom;
 	for (int r = 0; r < roomIds.size(); r++) {
 		for (int c = 0; c < roomIds[r].size(); c++) {
-			// TODO enforce contiguous rooms here? May also want to validate
-			// givens. For now assuming valid input.
 			roomMap[roomIds[r][c]].push_back({r, c});
 			if (cellValues[r][c]) {
 				cellsCompletedInRoom[roomIds[r][c]]++;

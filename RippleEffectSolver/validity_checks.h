@@ -21,7 +21,11 @@ bool checkColumn(const Cell& cell, int value, const Board& cellValues);
 bool checkRoom(const Cell& cell, const CellList& cells, int value,
 			   const Board& cellValues);
 
-// Returns true if the entire board satisfies all of the puzzle's rules.
+// Validate room IDs, ensuring they are all contiguous.
+bool validateRooms(const Board& roomIds, const RoomMap& roomMap);
+
+// Returns true if the entire board satisfies all of the puzzle's rules. Also
+// checks that all rooms are contiguous.
 bool validateBoard(const Board& cellValues, const Board& roomIds,
 				   const RoomMap& roomMap, bool allowEmpty);
 
