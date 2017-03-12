@@ -438,24 +438,27 @@ int generateAndAugment() {
 				roomMap[roomIds[r][c]].push_back({r, c});
 			}
 		}
-
 		switch (VERBOSITY) {
 			case 2:
 			case 1:
-				std::cout << "Board before smoothing:" << std::endl;
+				std::cout << "Initial random room generation:" << std::endl;
 				printBoard(cellValues, roomIds);
+				std::cout << "Beginning smoothing..." << std::endl;
 			default:
 				break;
 		}
 
 		// We now have a fairly decent looking board, but it may still have
 		// nasty invalid bits:
-		// - Neighboring 1x1 rooms.
-		// - Neighboring 2x1 rooms that form a 4x1 line.
-		// - 3 or more mutually adjacent 2x1 rooms.
+		// - Adjacent 1x1 rooms.
+		// - Adjacent 2x1 rooms that form a 4x1 line.
+		// - 3 or more contiguous 2x1 rooms.
+		// - A 1x1 in-between two 2x1 rooms.
 		// Since merging 1x1 rooms may produce 2x1 rooms, these steps must be
 		// done in sequence.
 
+		// Adjacent 1x1s
+		bool smoothed = false;
 		for (int r = 0; r < height; r++) {
 			for (int c = 0; c < width; c++) {
 				int roomId = roomIds[r][c];
@@ -486,6 +489,7 @@ int generateAndAugment() {
 						roomIds[r + 1][c] = roomIdRight;
 						roomMap[roomIdRight].push_back({r, c});
 						roomMap[roomIdRight].push_back({r + 1, c});
+						smoothed = true;
 					} else if (singleBelow || singleRight) {
 						// Merge with the other cell.
 						int mergedRoomId;
@@ -497,20 +501,26 @@ int generateAndAugment() {
 						roomMap.erase(roomId);
 						roomIds[r][c] = mergedRoomId;
 						roomMap[mergedRoomId].push_back({r, c});
+						smoothed = true;
 					}
 				}
 			}
 		}
-
 		switch (VERBOSITY) {
 			case 2:
 			case 1:
-				std::cout << "Board after smoothing 1x1s:" << std::endl;
-				printBoard(cellValues, roomIds);
+				if (smoothed) {
+					std::cout << "Board after smoothing 1x1s:" << std::endl;
+					printBoard(cellValues, roomIds);
+				} else {
+					std::cout << "No change after smoothing 1x1s." << std::endl;
+				}
 			default:
 				break;
 		}
 
+		// Linear 2x1s
+		smoothed = false;
 		for (int r = 0; r < height; r++) {
 			for (int c = 0; c < width; c++) {
 				int roomId = roomIds[r][c];
@@ -547,31 +557,37 @@ int generateAndAugment() {
 								roomMap[nextRoomId].push_back(first);
 								roomMap[nextRoomId].push_back(second);
 								roomMap.erase(roomId);
+								smoothed = true;
 							}
 						}
 					}
 				}
 			}
 		}
-
 		switch (VERBOSITY) {
 			case 2:
 			case 1:
-				std::cout << "Board after smoothing linear 2x1s:" << std::endl;
-				printBoard(cellValues, roomIds);
+				if (smoothed) {
+					std::cout << "Board after smoothing linear 2x1s:"
+							  << std::endl;
+					printBoard(cellValues, roomIds);
+				} else {
+					std::cout << "No change after smoothing linear 2x1s."
+							  << std::endl;
+				}
 			default:
 				break;
 		}
 
-		// Now, merge any 3 mutually adjacent 2x1 rooms.
+		// 3+ adjacent 2x1s
+		smoothed = false;
 		std::vector<int> twoByOnes;
 		for (const auto& roomAndCells : roomMap) {
 			if (roomAndCells.second.size() == 2)
 				twoByOnes.push_back(roomAndCells.first);
 		}
 		for (const auto& thisTwoByOne : twoByOnes) {
-			// Check if we can reach two other 2x1s from here. Maximum of 6
-			// cells to look at.
+			// Check if we can reach two other 2x1s from here.
 			const auto& cellsInRoom = roomMap[thisTwoByOne];
 			std::set<int> otherTwoByOnes;
 			for (const auto& cell : cellsInRoom) {
@@ -606,29 +622,78 @@ int generateAndAugment() {
 				}
 			}
 			if (otherTwoByOnes.size() > 1) {
-				std::cout << "Need to merge 2x1s adjacent to ("
-						  << cellsInRoom.front().first + 1 << ", "
-						  << cellsInRoom.front().second + 1 << ")" << std::endl;
 				// Make every cell have this room's ID
+				// TODO investigate if all 3+ must be merged, or just taking out
+				// 2 would do the trick.
 				int r, c;
-				for (const auto& otherTwoByOne : otherTwoByOnes) {
-					const auto& otherCells = roomMap[otherTwoByOne];
-					for (const auto& otherCell : otherCells) {
-						std::tie(r, c) = otherCell;
-						roomIds[r][c] = thisTwoByOne;
-						roomMap[thisTwoByOne].push_back(otherCell);
-					}
-					roomMap.erase(otherTwoByOne);
+				// for (const auto& otherTwoByOne : otherTwoByOnes) {
+				int otherTwoByOne = *otherTwoByOnes.begin();
+				const auto& otherCells = roomMap[otherTwoByOne];
+				for (const auto& otherCell : otherCells) {
+					std::tie(r, c) = otherCell;
+					roomIds[r][c] = thisTwoByOne;
+					roomMap[thisTwoByOne].push_back(otherCell);
 				}
+				roomMap.erase(otherTwoByOne);
+				// }
+				smoothed = true;
 			}
 		}
-
 		switch (VERBOSITY) {
 			case 2:
 			case 1:
-				std::cout << "Board after smoothing 3+ adjacent 2x1s:"
-						  << std::endl;
-				printBoard(cellValues, roomIds);
+				if (smoothed) {
+					std::cout << "Board after smoothing 3+ adjacent 2x1s:"
+							  << std::endl;
+					printBoard(cellValues, roomIds);
+				} else {
+					std::cout << "No change after smoothing 3+ adjacent 2x1s."
+							  << std::endl;
+				}
+			default:
+				break;
+		}
+
+		// 1x1 inbetween two 2x1s
+		smoothed = false;
+		for (const auto& roomAndCells : roomMap) {
+			if (roomAndCells.second.size() == 1) {
+				int r, c;
+				std::tie(r, c) = roomAndCells.second.front();
+				if (r != 0 && r != height - 1) {
+					// Check above and below
+					int roomAbove = roomIds[r - 1][c];
+					int roomBelow = roomIds[r + 1][c];
+					if (roomMap[roomAbove].size() == 2 &&
+						roomMap[roomBelow].size() == 2) {
+						std::cout << "Vertical 2-1-2 at (" << r + 1 << ", "
+								  << c + 1 << ")" << std::endl;
+					}
+				}
+				if (c != 0 && c != width - 1) {
+					// Check right and left
+					int roomLeft = roomIds[r][c - 1];
+					int roomRight = roomIds[r][c + 1];
+					if (roomMap[roomLeft].size() == 2 &&
+						roomMap[roomRight].size() == 2) {
+						std::cout << "Horizontal 2-1-2 at (" << r + 1 << ", "
+								  << c + 1 << ")" << std::endl;
+					}
+				}
+				// TODO merge whichever is convenient, probably not both.
+			}
+		}
+		switch (VERBOSITY) {
+			case 2:
+			case 1:
+				if (smoothed) {
+					std::cout << "Board after smoothing 2x1-1x1-2x1s:"
+							  << std::endl;
+					printBoard(cellValues, roomIds);
+				} else {
+					std::cout << "No change after smoothing 2x1-1x1-2x1s."
+							  << std::endl;
+				}
 			default:
 				break;
 		}
@@ -673,18 +738,21 @@ int inputAndAugment() {
 }
 
 int main(void) {
-	//	std::cout
-	//		<< "Generate random puzzle (g) or augment existing instance (a)? ";
-	char choice = 'g';
-	// std::cin >> choice;
-	switch (choice) {
-		case 'g':
-		case 'G':
-			return generateAndAugment();
-		case 'a':
-		case 'A':
-			return inputAndAugment();
-		default:
-			std::cerr << "Invalid choice. Enter 'g' or 'a'... ";
+	while (true) {
+		//	std::cout
+		//		<< "Generate random puzzle (g) or augment existing instance (a)?
+		//";
+		char choice = 'g';
+		// std::cin >> choice;
+		switch (choice) {
+			case 'g':
+			case 'G':
+				return generateAndAugment();
+			case 'a':
+			case 'A':
+				return inputAndAugment();
+			default:
+				std::cerr << "Invalid choice.";
+		}
 	}
 }
