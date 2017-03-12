@@ -9,6 +9,7 @@
 #include <iostream>
 #include <map>
 #include <numeric>
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -107,8 +108,7 @@ int generateRandomPuzzle() {
 		// nasty invalid bits:
 		// - Neighboring 1x1 rooms.
 		// - Neighboring 2x1 rooms that form a 4x1 line.
-		// - 3 Neighboring 2x1 rooms with a straight line connecting at least
-		//     one of their cells.
+		// - 3 or more mutually adjacent 2x1 rooms.
 		// Since merging 1x1 rooms may produce 2x1 rooms, these steps must be
 		// done in sequence.
 
@@ -225,6 +225,78 @@ int generateRandomPuzzle() {
 		}
 #endif /* SIMPLE_PRINT_BOARD */
 
+		// Now, merge any 3 mutually adjacent 2x1 rooms.
+		std::vector<int> twoByOnes;
+		for (const auto& roomAndCells : roomMap) {
+			if (roomAndCells.second.size() == 2)
+				twoByOnes.push_back(roomAndCells.first);
+		}
+		for (const auto& thisTwoByOne : twoByOnes) {
+			// Check if we can reach two other 2x1s from here. Maximum of 6
+			// cells to look at.
+			const auto& cellsInRoom = roomMap[thisTwoByOne];
+			std::set<int> otherTwoByOnes;
+			for (const auto& cell : cellsInRoom) {
+				int otherRoomId;
+				if (cell.first != 0) {
+					otherRoomId = roomIds[cell.first - 1][cell.second];
+					if (otherRoomId != thisTwoByOne &&
+						roomMap[otherRoomId].size() == 2) {
+						otherTwoByOnes.insert(otherRoomId);
+					}
+				}
+				if (cell.first != height - 1) {
+					otherRoomId = roomIds[cell.first + 1][cell.second];
+					if (otherRoomId != thisTwoByOne &&
+						roomMap[otherRoomId].size() == 2) {
+						otherTwoByOnes.insert(otherRoomId);
+					}
+				}
+				if (cell.second != 0) {
+					otherRoomId = roomIds[cell.first][cell.second - 1];
+					if (otherRoomId != thisTwoByOne &&
+						roomMap[otherRoomId].size() == 2) {
+						otherTwoByOnes.insert(otherRoomId);
+					}
+				}
+				if (cell.second != width - 1) {
+					otherRoomId = roomIds[cell.first][cell.second + 1];
+					if (otherRoomId != thisTwoByOne &&
+						roomMap[otherRoomId].size() == 2) {
+						otherTwoByOnes.insert(otherRoomId);
+					}
+				}
+			}
+			if (otherTwoByOnes.size() > 1) {
+				std::cout << "Need to merge 2x1s adjacent to ("
+						  << cellsInRoom.front().first + 1 << ", "
+						  << cellsInRoom.front().second + 1 << ")" << std::endl;
+				// Make every cell have this room's ID
+				int r, c;
+				for (const auto& otherTwoByOne : otherTwoByOnes) {
+					const auto& otherCells = roomMap[otherTwoByOne];
+					for (const auto& otherCell : otherCells) {
+						std::tie(r, c) = otherCell;
+						roomIds[r][c] = thisTwoByOne;
+						roomMap[thisTwoByOne].push_back(otherCell);
+					}
+					roomMap.erase(otherTwoByOne);
+				}
+			}
+		}
+
+		std::cout << "Board after smoothing 3+ adjacent 2x1s:" << std::endl;
+		printBoard(cellValues, roomIds);
+#ifndef SIMPLE_PRINT_BOARD
+		switch (VERBOSITY) {
+			case 2:
+			case 1:
+				uglyPrintBoard(cellValues, roomIds);
+			default:
+				break;
+		}
+#endif /* SIMPLE_PRINT_BOARD */
+
 		// Rebuild some info and attempt the puzzle.
 		std::map<int, int> cellsCompletedInRoom;
 		std::tie(roomMap, cellsCompletedInRoom) =
@@ -234,9 +306,8 @@ int generateRandomPuzzle() {
 			std::cerr << "Invalid initial board." << std::endl;
 			break;
 		} else {
-			std::cout
-				<< "This board is valid. Computing all solutions..."
-				<< std::endl;
+			std::cout << "This board is valid. Computing all solutions..."
+					  << std::endl;
 			const auto& solvedWithBoards = findAllSolutions(
 				cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
 			if (!solvedWithBoards.first) {
