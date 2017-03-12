@@ -372,10 +372,10 @@ int generateAndAugment() {
 	while (true) {
 		int width, height;
 		std::cout
-			<< "Specify the width of the puzzle to be created (-1 to quit)... ";
+			<< "Specify the width of the puzzle to be created (-1 to quit): ";
 		std::cin >> width;
 		if (width == -1) return 1;
-		std::cout << "Specify the height of the puzzle to be created... ";
+		std::cout << "Specify the height of the puzzle to be created: ";
 		std::cin >> height;
 
 		Board cellValues, roomIds;
@@ -384,20 +384,9 @@ int generateAndAugment() {
 			roomIds.emplace_back(width);
 		}
 
-		std::string s;
-		std::cout << "Input seed string." << std::endl;
-		std::cin >> s;
-		int seed = 0;
-		for (const char& c : s) {
-			seed += c;
-		}
-		switch (VERBOSITY) {
-			case 2:
-			case 1:
-				std::cout << "Seed is " << seed << std::endl;
-			default:
-				break;
-		}
+		int seed;
+		std::cout << "Input seed (integer): ";
+		std::cin >> seed;
 		std::srand(seed);
 
 		int newRoomId = 1;
