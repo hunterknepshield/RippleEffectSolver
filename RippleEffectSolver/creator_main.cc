@@ -19,329 +19,20 @@
 #include "typedefs.h"
 #include "validity_checks.h"
 
-// Verbosity settings. 0 = silent, 1 = print message on action, 2 = print
-// message and board on action.
-int VERBOSITY = 0;
+// Verbosity settings. 0 = silent, 1 = print message and board on modification.
+// Not supplied as a parameter to solving routines, since those produce
+// comparatively huge amounts of output.
+int VERBOSITY = 1;
+// Verbosity settings that are passed to solving routines. 0 = silent, 1 = print
+// message on action, 2 = print message and board on action.
+int SOLVING_VERBOSITY = 0;
 
-int generateRandomPuzzle() {
-	while (true) {
-		int width, height;
-		std::cout << "Specify the width of the puzzle to be created... ";
-		std::cin >> width;
-		std::cout << "Specify the height of the puzzle to be created... ";
-		std::cin >> height;
-
-		Board cellValues, roomIds;
-		for (int r = 0; r < height; r++) {
-			cellValues.emplace_back(width);
-			roomIds.emplace_back(width);
-		}
-
-		std::string s;
-		std::cout << "Input seed string." << std::endl;
-		std::cin >> s;
-		int seed = 0;
-		for (const char& c : s) {
-			seed += c;
-		}
-		std::cout << "Seed is " << seed << std::endl;
-		std::srand(seed);
-
-		int newRoomId = 1;
-
-		int maxInt = std::numeric_limits<int>::max();
-		// We will expand a room 50% of the time. If rand() returns a value
-		// below this threshold, we'll expand an existing room.
-		int defaultLimit = maxInt / 5 * 4;
-		// Puzzles with huge amounts of big numbers aren't very exciting.
-		// Prevent any rooms larger than this.
-		int maxRoomSize = std::min(width, height) * 2 / 3;
-		// Once we get to rooms of this size, make it harder and harder to have
-		// a larger room.
-		int beginningDifficultyIncrease = std::min(width, height) / 2;
-		RoomMap roomMap;
-		for (int r = 0; r < height; r++) {
-			for (int c = 0; c < width; c++) {
-				// Fill in from left to right, top to bottom.
-				int roomId = 0;
-				if (c == 0 && r == 0) {
-					// We have to start a new room here for obvious reasons.
-					roomIds[r][c] = newRoomId++;
-				} else if (c == 0) {
-					roomId = roomIds[r - 1][c];
-				} else if (r == 0) {
-					roomId = roomIds[r][c - 1];
-				} else {
-					// Roll to determine if we take from above or below.
-					roomId = std::rand() < maxInt / 2 ? roomIds[r - 1][c]
-													  : roomIds[r][c - 1];
-				}
-				if (roomId != 0) {
-					int roomSize = (int)roomMap[roomId].size();
-					bool expand;
-					if (roomSize >= beginningDifficultyIncrease) {
-						// Expansion chance scales according to the current room
-						// size. Bigger rooms need to be  harder harder to
-						// expand, so they get lower limits. Slightly weird
-						// order of operations to ensure the most accurate value
-						// since this is integer division.
-						int adjustedLimit = defaultLimit / maxRoomSize *
-											(maxRoomSize - roomSize);
-						std::cout << "Room " << roomId
-								  << " is currently of size " << roomSize
-								  << ". To expand, need to be less than "
-								  << adjustedLimit << std::endl;
-						expand = std::rand() < adjustedLimit;
-					} else {
-						expand = std::rand() < defaultLimit;
-					}
-					roomIds[r][c] = expand ? roomId : newRoomId++;
-				}
-				roomMap[roomIds[r][c]].push_back({r, c});
-			}
-		}
-
-		std::cout << "Board before smoothing:" << std::endl;
-		printBoard(cellValues, roomIds);
-
-		// We now have a fairly decent looking board, but it may still have
-		// nasty invalid bits:
-		// - Neighboring 1x1 rooms.
-		// - Neighboring 2x1 rooms that form a 4x1 line.
-		// - 3 or more mutually adjacent 2x1 rooms.
-		// Since merging 1x1 rooms may produce 2x1 rooms, these steps must be
-		// done in sequence.
-
-		for (int r = 0; r < height; r++) {
-			for (int c = 0; c < width; c++) {
-				int roomId = roomIds[r][c];
-				if (roomMap[roomId].size() == 1) {
-					// Find neighboring 1x1 rooms, if any, and merge them.
-					bool singleBelow = false, singleRight = false;
-					// Check neighboring rooms. If any of them are also 1x1, we
-					// need to do something to fix this invalid state.
-					if (r != height - 1) {
-						int roomIdBelow = roomIds[r + 1][c];
-						if (roomMap[roomIdBelow].size() == 1) {
-							singleBelow = true;
-						}
-					}
-					if (c != width - 1) {
-						int roomIdRight = roomIds[r][c + 1];
-						if (roomMap[roomIdRight].size() == 1) {
-							singleRight = true;
-						}
-					}
-					if (singleBelow && singleRight) {
-						// Merge all 3, take the ID of the one to the right.
-						int roomIdBelow = roomIds[r + 1][c],
-							roomIdRight = roomIds[r][c + 1];
-						roomMap.erase(roomIdBelow);
-						roomMap.erase(roomId);
-						roomIds[r][c] = roomIdRight;
-						roomIds[r + 1][c] = roomIdRight;
-						roomMap[roomIdRight].push_back({r, c});
-						roomMap[roomIdRight].push_back({r + 1, c});
-					} else if (singleBelow || singleRight) {
-						// Merge with the other cell.
-						int mergedRoomId;
-						if (singleBelow) {
-							mergedRoomId = roomIds[r + 1][c];
-						} else {
-							mergedRoomId = roomIds[r][c + 1];
-						}
-						roomMap.erase(roomId);
-						roomIds[r][c] = mergedRoomId;
-						roomMap[mergedRoomId].push_back({r, c});
-					}
-				}
-			}
-		}
-
-		std::cout << "Board after smoothing 1x1s:" << std::endl;
-		printBoard(cellValues, roomIds);
-#ifndef SIMPLE_PRINT_BOARD
-		switch (VERBOSITY) {
-			case 2:
-			case 1:
-				uglyPrintBoard(cellValues, roomIds);
-			default:
-				break;
-		}
-#endif /* SIMPLE_PRINT_BOARD */
-
-		for (int r = 0; r < height; r++) {
-			for (int c = 0; c < width; c++) {
-				int roomId = roomIds[r][c];
-				if (roomMap[roomId].size() == 2) {
-					// Look for adjacent 2x1 rooms that align with this one.
-					const auto& cells = roomMap[roomId];
-					const auto &first = cells.front(), &second = cells.back();
-					bool searchInRow = (first.first == second.first);
-					int largerInDirection =
-						std::max(searchInRow ? first.second : first.first,
-								 searchInRow ? second.second : second.first);
-					if (largerInDirection <
-						(searchInRow ? width : height) - 2) {
-						// We can still fit another 2x1 room in this space, so
-						// we have to check it.
-						int nextRoomId =
-							searchInRow ? roomIds[r][largerInDirection + 1]
-										: roomIds[largerInDirection + 1][c];
-						if (roomMap[nextRoomId].size() == 2) {
-							// Ensure that it's the same orientation as the
-							// current room.
-							const auto& nextRoomCells = roomMap[nextRoomId];
-							const auto &next1 = nextRoomCells.front(),
-									   &next2 = nextRoomCells.back();
-							bool sameAlignment =
-								(searchInRow ? next1.first == next2.first
-											 : next1.second == next2.second);
-							if (sameAlignment) {
-								// Now we merge these two rooms, trashing the
-								// current room ID.
-								roomIds[first.first][first.second] = nextRoomId;
-								roomIds[second.first][second.second] =
-									nextRoomId;
-								roomMap[nextRoomId].push_back(first);
-								roomMap[nextRoomId].push_back(second);
-								roomMap.erase(roomId);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		std::cout << "Board after smoothing linear 2x1s:" << std::endl;
-		printBoard(cellValues, roomIds);
-#ifndef SIMPLE_PRINT_BOARD
-		switch (VERBOSITY) {
-			case 2:
-			case 1:
-				uglyPrintBoard(cellValues, roomIds);
-			default:
-				break;
-		}
-#endif /* SIMPLE_PRINT_BOARD */
-
-		// Now, merge any 3 mutually adjacent 2x1 rooms.
-		std::vector<int> twoByOnes;
-		for (const auto& roomAndCells : roomMap) {
-			if (roomAndCells.second.size() == 2)
-				twoByOnes.push_back(roomAndCells.first);
-		}
-		for (const auto& thisTwoByOne : twoByOnes) {
-			// Check if we can reach two other 2x1s from here. Maximum of 6
-			// cells to look at.
-			const auto& cellsInRoom = roomMap[thisTwoByOne];
-			std::set<int> otherTwoByOnes;
-			for (const auto& cell : cellsInRoom) {
-				int otherRoomId;
-				if (cell.first != 0) {
-					otherRoomId = roomIds[cell.first - 1][cell.second];
-					if (otherRoomId != thisTwoByOne &&
-						roomMap[otherRoomId].size() == 2) {
-						otherTwoByOnes.insert(otherRoomId);
-					}
-				}
-				if (cell.first != height - 1) {
-					otherRoomId = roomIds[cell.first + 1][cell.second];
-					if (otherRoomId != thisTwoByOne &&
-						roomMap[otherRoomId].size() == 2) {
-						otherTwoByOnes.insert(otherRoomId);
-					}
-				}
-				if (cell.second != 0) {
-					otherRoomId = roomIds[cell.first][cell.second - 1];
-					if (otherRoomId != thisTwoByOne &&
-						roomMap[otherRoomId].size() == 2) {
-						otherTwoByOnes.insert(otherRoomId);
-					}
-				}
-				if (cell.second != width - 1) {
-					otherRoomId = roomIds[cell.first][cell.second + 1];
-					if (otherRoomId != thisTwoByOne &&
-						roomMap[otherRoomId].size() == 2) {
-						otherTwoByOnes.insert(otherRoomId);
-					}
-				}
-			}
-			if (otherTwoByOnes.size() > 1) {
-				std::cout << "Need to merge 2x1s adjacent to ("
-						  << cellsInRoom.front().first + 1 << ", "
-						  << cellsInRoom.front().second + 1 << ")" << std::endl;
-				// Make every cell have this room's ID
-				int r, c;
-				for (const auto& otherTwoByOne : otherTwoByOnes) {
-					const auto& otherCells = roomMap[otherTwoByOne];
-					for (const auto& otherCell : otherCells) {
-						std::tie(r, c) = otherCell;
-						roomIds[r][c] = thisTwoByOne;
-						roomMap[thisTwoByOne].push_back(otherCell);
-					}
-					roomMap.erase(otherTwoByOne);
-				}
-			}
-		}
-
-		std::cout << "Board after smoothing 3+ adjacent 2x1s:" << std::endl;
-		printBoard(cellValues, roomIds);
-#ifndef SIMPLE_PRINT_BOARD
-		switch (VERBOSITY) {
-			case 2:
-			case 1:
-				uglyPrintBoard(cellValues, roomIds);
-			default:
-				break;
-		}
-#endif /* SIMPLE_PRINT_BOARD */
-
-		// Rebuild some info and attempt the puzzle.
-		std::map<int, int> cellsCompletedInRoom;
-		std::tie(roomMap, cellsCompletedInRoom) =
-			generateRoomMapAndCompletedCellMap(cellValues, roomIds);
-
-		if (!validateIncompleteBoard(cellValues, roomIds, roomMap)) {
-			std::cerr << "Invalid initial board." << std::endl;
-			break;
-		} else {
-			std::cout << "This board is valid. Computing all solutions..."
-					  << std::endl;
-			const auto& solvedWithBoards = findAllSolutions(
-				cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
-			if (!solvedWithBoards.first) {
-				std::cout << "This board can't be solved." << std::endl;
-			} else {
-				std::cout << "Solved this board with "
-						  << solvedWithBoards.second.size() << " solutions."
-						  << std::endl;
-				int solution = 0;
-				for (const auto& board : solvedWithBoards.second) {
-					std::cout << "Solution " << ++solution << ":" << std::endl;
-					printBoard(board, roomIds);
-				}
-			}
-		}
-
-		std::cout << "Enter 'q' to stop (anything else to continue)."
-				  << std::endl;
-		char c;
-		std::cin >> c;
-		if (c == 'q') break;
-	}
-
-	return 999;
-}
-
-int augmentExistingPuzzle() {
-	std::cout << "Enter cell values and room IDs..." << std::endl;
-	size_t boardWidth = 0;
-	Board cellValues, roomIds;
-	if (!readCells(&boardWidth, &cellValues) ||
-		!readRooms(boardWidth, cellValues.size(), &roomIds)) {
-		return 1;
-	}
+// Main interactive routine. General flow:
+// - Generate all possible solutions.
+//   - If no solutions, undo the previous action if possible, otherwise fail.
+//   - If one solution, we're done and we've generated a puzzle.
+//   - If multiple solutions, ask the user for a new cell to fill in.
+int augmentWithUserInput(Board& cellValues, const Board& roomIds) {
 	std::cout << "Initial board state:" << std::endl;
 	printBoard(cellValues, roomIds);
 
@@ -380,7 +71,7 @@ int augmentExistingPuzzle() {
 			generateRoomMapAndCompletedCellMap(cellValues, roomIds);
 		// Figure out what we know for sure right now.
 		fillKnownCellsInBoard(cellValues, roomIds, roomMap,
-							  cellsCompletedInRoom, VERBOSITY);
+							  cellsCompletedInRoom, SOLVING_VERBOSITY);
 		std::cout << "Currently known cell values:" << std::endl;
 		printBoard(cellValues, roomIds);
 
@@ -388,10 +79,9 @@ int augmentExistingPuzzle() {
 				  << std::endl;
 		bool solved;
 		std::set<Board> boards;
-		int solutionCount = 0;
-		std::tie(solved, boards) = findAllSolutions(
-			cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY,
-			VERBOSITY > 0 ? &solutionCount : nullptr);
+		std::tie(solved, boards) =
+			findAllSolutions(cellValues, roomIds, roomMap, cellsCompletedInRoom,
+							 SOLVING_VERBOSITY);
 
 		if (!solved) {
 			// We've run into a dead end. Undo if we can, otherwise fail.
@@ -509,7 +199,7 @@ int augmentExistingPuzzle() {
 						 col++) {
 						if (valueFrequencyForCell[row][col].size() == 1)
 							continue;  // This is a known cell, we don't need to
-									   // bother printing this out.
+						// bother printing this out.
 
 						std::cout << "Value frequency for cell (" << row + 1
 								  << ", " << col + 1 << "):" << std::endl;
@@ -534,7 +224,7 @@ int augmentExistingPuzzle() {
 						 col++) {
 						if (valueFrequencyForCell[row][col].size() == 1)
 							continue;  // This is a known cell, we don't need to
-									   // bother printing this out.
+						// bother printing this out.
 
 						for (const auto& valueAndFrequency :
 							 valueFrequencyForCell[row][col]) {
@@ -621,7 +311,7 @@ int augmentExistingPuzzle() {
 					  << "): ";
 			std::cin >> c;
 			c--;
-			if (c < 0 || c >= boardWidth) {
+			if (c < 0 || c >= cellValues[r].size()) {
 				std::cerr << "Invalid column." << std::endl;
 				goto input_c;  // Oh my...
 			}
@@ -676,6 +366,323 @@ int augmentExistingPuzzle() {
 	} while (true);
 }
 
+// Generates a room configuration according to the user-specified width and
+// height. Loops until a solvable board is generated or the user quits.
+int generateAndAugment() {
+	while (true) {
+		int width, height;
+		std::cout
+			<< "Specify the width of the puzzle to be created (-1 to quit)... ";
+		std::cin >> width;
+		if (width == -1) return 1;
+		std::cout << "Specify the height of the puzzle to be created... ";
+		std::cin >> height;
+
+		Board cellValues, roomIds;
+		for (int r = 0; r < height; r++) {
+			cellValues.emplace_back(width);
+			roomIds.emplace_back(width);
+		}
+
+		std::string s;
+		std::cout << "Input seed string." << std::endl;
+		std::cin >> s;
+		int seed = 0;
+		for (const char& c : s) {
+			seed += c;
+		}
+		switch (VERBOSITY) {
+			case 2:
+			case 1:
+				std::cout << "Seed is " << seed << std::endl;
+			default:
+				break;
+		}
+		std::srand(seed);
+
+		int newRoomId = 1;
+
+		int maxInt = std::numeric_limits<int>::max();
+		// We will expand a room 50% of the time. If rand() returns a value
+		// below this threshold, we'll expand an existing room.
+		int defaultLimit = maxInt / 5 * 4;
+		// Puzzles with huge amounts of big numbers aren't very exciting.
+		// Prevent any rooms larger than this.
+		int maxRoomSize = std::min(width, height) * 2 / 3;
+		// Once we get to rooms of this size, make it harder and harder to have
+		// a larger room.
+		int beginningDifficultyIncrease = std::min(width, height) / 2;
+		RoomMap roomMap;
+		for (int r = 0; r < height; r++) {
+			for (int c = 0; c < width; c++) {
+				// Fill in from left to right, top to bottom.
+				int roomId = 0;
+				if (c == 0 && r == 0) {
+					// We have to start a new room here for obvious reasons.
+					roomIds[r][c] = newRoomId++;
+				} else if (c == 0) {
+					roomId = roomIds[r - 1][c];
+				} else if (r == 0) {
+					roomId = roomIds[r][c - 1];
+				} else {
+					// Roll to determine if we take from above or below.
+					roomId = std::rand() < maxInt / 2 ? roomIds[r - 1][c]
+													  : roomIds[r][c - 1];
+				}
+				if (roomId != 0) {
+					int roomSize = (int)roomMap[roomId].size();
+					bool expand;
+					if (roomSize >= beginningDifficultyIncrease) {
+						// Expansion chance scales according to the current room
+						// size. Bigger rooms need to be  harder harder to
+						// expand, so they get lower limits. Slightly weird
+						// order of operations to ensure the most accurate value
+						// since this is integer division.
+						int adjustedLimit = defaultLimit / maxRoomSize *
+											(maxRoomSize - roomSize);
+						expand = std::rand() < adjustedLimit;
+					} else {
+						expand = std::rand() < defaultLimit;
+					}
+					roomIds[r][c] = expand ? roomId : newRoomId++;
+				}
+				roomMap[roomIds[r][c]].push_back({r, c});
+			}
+		}
+
+		switch (VERBOSITY) {
+			case 2:
+			case 1:
+				std::cout << "Board before smoothing:" << std::endl;
+				printBoard(cellValues, roomIds);
+			default:
+				break;
+		}
+
+		// We now have a fairly decent looking board, but it may still have
+		// nasty invalid bits:
+		// - Neighboring 1x1 rooms.
+		// - Neighboring 2x1 rooms that form a 4x1 line.
+		// - 3 or more mutually adjacent 2x1 rooms.
+		// Since merging 1x1 rooms may produce 2x1 rooms, these steps must be
+		// done in sequence.
+
+		for (int r = 0; r < height; r++) {
+			for (int c = 0; c < width; c++) {
+				int roomId = roomIds[r][c];
+				if (roomMap[roomId].size() == 1) {
+					// Find neighboring 1x1 rooms, if any, and merge them.
+					bool singleBelow = false, singleRight = false;
+					// Check neighboring rooms. If any of them are also 1x1, we
+					// need to do something to fix this invalid state.
+					if (r != height - 1) {
+						int roomIdBelow = roomIds[r + 1][c];
+						if (roomMap[roomIdBelow].size() == 1) {
+							singleBelow = true;
+						}
+					}
+					if (c != width - 1) {
+						int roomIdRight = roomIds[r][c + 1];
+						if (roomMap[roomIdRight].size() == 1) {
+							singleRight = true;
+						}
+					}
+					if (singleBelow && singleRight) {
+						// Merge all 3, take the ID of the one to the right.
+						int roomIdBelow = roomIds[r + 1][c],
+							roomIdRight = roomIds[r][c + 1];
+						roomMap.erase(roomIdBelow);
+						roomMap.erase(roomId);
+						roomIds[r][c] = roomIdRight;
+						roomIds[r + 1][c] = roomIdRight;
+						roomMap[roomIdRight].push_back({r, c});
+						roomMap[roomIdRight].push_back({r + 1, c});
+					} else if (singleBelow || singleRight) {
+						// Merge with the other cell.
+						int mergedRoomId;
+						if (singleBelow) {
+							mergedRoomId = roomIds[r + 1][c];
+						} else {
+							mergedRoomId = roomIds[r][c + 1];
+						}
+						roomMap.erase(roomId);
+						roomIds[r][c] = mergedRoomId;
+						roomMap[mergedRoomId].push_back({r, c});
+					}
+				}
+			}
+		}
+
+		switch (VERBOSITY) {
+			case 2:
+			case 1:
+				std::cout << "Board after smoothing 1x1s:" << std::endl;
+				printBoard(cellValues, roomIds);
+			default:
+				break;
+		}
+
+		for (int r = 0; r < height; r++) {
+			for (int c = 0; c < width; c++) {
+				int roomId = roomIds[r][c];
+				if (roomMap[roomId].size() == 2) {
+					// Look for adjacent 2x1 rooms that align with this one.
+					const auto& cells = roomMap[roomId];
+					const auto &first = cells.front(), &second = cells.back();
+					bool searchInRow = (first.first == second.first);
+					int largerInDirection =
+						std::max(searchInRow ? first.second : first.first,
+								 searchInRow ? second.second : second.first);
+					if (largerInDirection <
+						(searchInRow ? width : height) - 2) {
+						// We can still fit another 2x1 room in this space, so
+						// we have to check it.
+						int nextRoomId =
+							searchInRow ? roomIds[r][largerInDirection + 1]
+										: roomIds[largerInDirection + 1][c];
+						if (roomMap[nextRoomId].size() == 2) {
+							// Ensure that it's the same orientation as the
+							// current room.
+							const auto& nextRoomCells = roomMap[nextRoomId];
+							const auto &next1 = nextRoomCells.front(),
+									   &next2 = nextRoomCells.back();
+							bool sameAlignment =
+								(searchInRow ? next1.first == next2.first
+											 : next1.second == next2.second);
+							if (sameAlignment) {
+								// Now we merge these two rooms, trashing the
+								// current room ID.
+								roomIds[first.first][first.second] = nextRoomId;
+								roomIds[second.first][second.second] =
+									nextRoomId;
+								roomMap[nextRoomId].push_back(first);
+								roomMap[nextRoomId].push_back(second);
+								roomMap.erase(roomId);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		switch (VERBOSITY) {
+			case 2:
+			case 1:
+				std::cout << "Board after smoothing linear 2x1s:" << std::endl;
+				printBoard(cellValues, roomIds);
+			default:
+				break;
+		}
+
+		// Now, merge any 3 mutually adjacent 2x1 rooms.
+		std::vector<int> twoByOnes;
+		for (const auto& roomAndCells : roomMap) {
+			if (roomAndCells.second.size() == 2)
+				twoByOnes.push_back(roomAndCells.first);
+		}
+		for (const auto& thisTwoByOne : twoByOnes) {
+			// Check if we can reach two other 2x1s from here. Maximum of 6
+			// cells to look at.
+			const auto& cellsInRoom = roomMap[thisTwoByOne];
+			std::set<int> otherTwoByOnes;
+			for (const auto& cell : cellsInRoom) {
+				int otherRoomId;
+				if (cell.first != 0) {
+					otherRoomId = roomIds[cell.first - 1][cell.second];
+					if (otherRoomId != thisTwoByOne &&
+						roomMap[otherRoomId].size() == 2) {
+						otherTwoByOnes.insert(otherRoomId);
+					}
+				}
+				if (cell.first != height - 1) {
+					otherRoomId = roomIds[cell.first + 1][cell.second];
+					if (otherRoomId != thisTwoByOne &&
+						roomMap[otherRoomId].size() == 2) {
+						otherTwoByOnes.insert(otherRoomId);
+					}
+				}
+				if (cell.second != 0) {
+					otherRoomId = roomIds[cell.first][cell.second - 1];
+					if (otherRoomId != thisTwoByOne &&
+						roomMap[otherRoomId].size() == 2) {
+						otherTwoByOnes.insert(otherRoomId);
+					}
+				}
+				if (cell.second != width - 1) {
+					otherRoomId = roomIds[cell.first][cell.second + 1];
+					if (otherRoomId != thisTwoByOne &&
+						roomMap[otherRoomId].size() == 2) {
+						otherTwoByOnes.insert(otherRoomId);
+					}
+				}
+			}
+			if (otherTwoByOnes.size() > 1) {
+				std::cout << "Need to merge 2x1s adjacent to ("
+						  << cellsInRoom.front().first + 1 << ", "
+						  << cellsInRoom.front().second + 1 << ")" << std::endl;
+				// Make every cell have this room's ID
+				int r, c;
+				for (const auto& otherTwoByOne : otherTwoByOnes) {
+					const auto& otherCells = roomMap[otherTwoByOne];
+					for (const auto& otherCell : otherCells) {
+						std::tie(r, c) = otherCell;
+						roomIds[r][c] = thisTwoByOne;
+						roomMap[thisTwoByOne].push_back(otherCell);
+					}
+					roomMap.erase(otherTwoByOne);
+				}
+			}
+		}
+
+		switch (VERBOSITY) {
+			case 2:
+			case 1:
+				std::cout << "Board after smoothing 3+ adjacent 2x1s:"
+						  << std::endl;
+				printBoard(cellValues, roomIds);
+			default:
+				break;
+		}
+
+		// Rebuild some info and attempt the puzzle.
+		std::map<int, int> cellsCompletedInRoom;
+		std::tie(roomMap, cellsCompletedInRoom) =
+			generateRoomMapAndCompletedCellMap(cellValues, roomIds);
+
+		if (!validateIncompleteBoard(cellValues, roomIds, roomMap)) {
+			std::cerr << "Invalid initial board." << std::endl;
+			break;
+		} else {
+			std::cout << "This board is valid. Checking for a solution..."
+					  << std::endl;
+			const auto& solvedWithBoard =
+				findSingleSolution(cellValues, roomIds, roomMap,
+								   cellsCompletedInRoom, SOLVING_VERBOSITY);
+			if (!solvedWithBoard.first) {
+				std::cout << "This board can't be solved. Trying again..."
+						  << std::endl;
+			} else {
+				std::cout << "This board is solvable. Beginning augmentation..."
+						  << std::endl;
+				return augmentWithUserInput(cellValues, roomIds);
+			}
+		}
+	}
+	return 1;
+}
+
+// Reads in a partially solved board from the user then begins to augment.
+int inputAndAugment() {
+	std::cout << "Enter cell values and room IDs..." << std::endl;
+	size_t boardWidth = 0;
+	Board cellValues, roomIds;
+	if (!readCells(&boardWidth, &cellValues) ||
+		!readRooms(boardWidth, cellValues.size(), &roomIds)) {
+		return 1;
+	}
+	return augmentWithUserInput(cellValues, roomIds);
+}
+
 int main(void) {
 	//	std::cout
 	//		<< "Generate random puzzle (g) or augment existing instance (a)? ";
@@ -684,11 +691,10 @@ int main(void) {
 	switch (choice) {
 		case 'g':
 		case 'G':
-			// TODO unimplemented
-			return generateRandomPuzzle();
+			return generateAndAugment();
 		case 'a':
 		case 'A':
-			return augmentExistingPuzzle();
+			return inputAndAugment();
 		default:
 			std::cerr << "Invalid choice. Enter 'g' or 'a'... ";
 	}
