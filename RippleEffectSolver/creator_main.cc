@@ -23,13 +23,13 @@
 int VERBOSITY = 0;
 
 int generateRandomPuzzle() {
-	int width, height;
-	std::cout << "Specify the width of the puzzle to be created... ";
-	std::cin >> width;
-	std::cout << "Specify the height of the puzzle to be created... ";
-	std::cin >> height;
-
 	while (true) {
+		int width, height;
+		std::cout << "Specify the width of the puzzle to be created... ";
+		std::cin >> width;
+		std::cout << "Specify the height of the puzzle to be created... ";
+		std::cin >> height;
+
 		Board cellValues, roomIds;
 		for (int r = 0; r < height; r++) {
 			cellValues.emplace_back(width);
@@ -103,11 +103,105 @@ int generateRandomPuzzle() {
 				roomMap[roomIds[r][c]].push_back({r, c});
 			}
 		}
+
+		std::cout << "Board before smoothing:" << std::endl;
 		printBoard(cellValues, roomIds);
 
-		// TODO "smoothing" - no 1x1s next to other 1x1s
+		// We now have a fairly decent looking board, but it may still have
+		// nasty invalid bits:
+		// - Neighboring 1x1 rooms.
+		// - Neighboring 2x2 rooms with all 4 cells in a straight line. (TODO)
+		for (int r = 0; r < height; r++) {
+			for (int c = 0; c < width; c++) {
+				int roomId = roomIds[r][c];
+				if (roomMap[roomId].size() == 1) {
+					bool singleBelow = false, singleRight = false;
+					// Check neighboring rooms. If any of them are also 1x1, we
+					// need to do something to fix this invalid state.
+					if (r != height - 1) {
+						int roomIdBelow = roomIds[r + 1][c];
+						if (roomMap[roomIdBelow].size() == 1) {
+							std::cout << "Cell (" << r + 2 << ", " << c + 1
+									  << ") is 1x1 too." << std::endl;
+							singleBelow = true;
+						}
+					}
+					if (c != width - 1) {
+						int roomIdRight = roomIds[r][c + 1];
+						if (roomMap[roomIdRight].size() == 1) {
+							std::cout << "Cell (" << r + 1 << ", " << c + 2
+									  << ") is 1x1 too." << std::endl;
+							singleRight = true;
+						}
+					}
+					if (singleBelow && singleRight) {
+						// Merge all 3, take the ID of the one to the right.
+						int roomIdBelow = roomIds[r + 1][c],
+							roomIdRight = roomIds[r][c + 1];
+						roomMap.erase(roomIdBelow);
+						roomMap.erase(roomId);
+						roomIds[r][c] = roomIdRight;
+						roomIds[r + 1][c] = roomIdRight;
+						roomMap[roomIdRight].push_back({r, c});
+						roomMap[roomIdRight].push_back({r + 1, c});
+					} else if (singleBelow || singleRight) {
+						// Merge with the other cell.
+						int mergedRoomId;
+						if (singleBelow) {
+							mergedRoomId = roomIds[r + 1][c];
+						} else {
+							mergedRoomId = roomIds[r][c + 1];
+						}
+						roomMap.erase(roomId);
+						roomIds[r][c] = mergedRoomId;
+						roomMap[mergedRoomId].push_back({r, c});
+					}
+				}
+			}
+		}
 
-		std::cout << "Enter 'q' to stop." << std::endl;
+		std::cout << "Board after smoothing:" << std::endl;
+		printBoard(cellValues, roomIds);
+#ifndef SIMPLE_PRINT_BOARD
+		switch (VERBOSITY) {
+			case 2:
+			case 1:
+				uglyPrintBoard(cellValues, roomIds);
+			default:
+				break;
+		}
+#endif /* SIMPLE_PRINT_BOARD */
+
+		// Rebuild some info and attempt the puzzle.
+		std::map<int, int> cellsCompletedInRoom;
+		std::tie(roomMap, cellsCompletedInRoom) =
+			generateRoomMapAndCompletedCellMap(cellValues, roomIds);
+
+		if (!validateIncompleteBoard(cellValues, roomIds, roomMap)) {
+			std::cerr << "Invalid initial board." << std::endl;
+			break;
+		} else {
+			std::cout
+				<< "This board appears to be valid. Computing all solutions..."
+				<< std::endl;
+			const auto& solvedWithBoards = findAllSolutions(
+				cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
+			if (!solvedWithBoards.first) {
+				std::cout << "This board can't be solved." << std::endl;
+			} else {
+				std::cout << "Solved this board with "
+						  << solvedWithBoards.second.size() << " solutions."
+						  << std::endl;
+				int solution = 0;
+				for (const auto& board : solvedWithBoards.second) {
+					std::cout << "Solution " << ++solution << ":" << std::endl;
+					printBoard(board, roomIds);
+				}
+			}
+		}
+
+		std::cout << "Enter 'q' to stop (anything else to continue)."
+				  << std::endl;
 		char c;
 		std::cin >> c;
 		if (c == 'q') break;
