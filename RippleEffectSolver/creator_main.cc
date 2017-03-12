@@ -29,15 +29,89 @@ int generateRandomPuzzle() {
 	std::cout << "Specify the height of the puzzle to be created... ";
 	std::cin >> height;
 
-	Board cellValues, roomIds;
-	for (int r = 0; r < height; r++) {
-		cellValues.emplace_back(width);
-		roomIds.emplace_back(width);
-	}
+	while (true) {
+		Board cellValues, roomIds;
+		for (int r = 0; r < height; r++) {
+			cellValues.emplace_back(width);
+			roomIds.emplace_back(width);
+		}
 
-	// TODO figure out how to populate roomIds semi-randomly
-	// Start with 'seeds' and expand them in some NSEW direction?
-	// TODO ensure that there aren't 2 1-cell rooms directly adjacent
+		std::string s;
+		std::cout << "Input seed string." << std::endl;
+		std::cin >> s;
+		int seed = 0;
+		for (const char& c : s) {
+			seed += c;
+		}
+		std::cout << "Seed is " << seed << std::endl;
+		std::srand(seed);
+
+		int newRoomId = 1;
+
+		int maxInt = std::numeric_limits<int>::max();
+		// We will expand a room 50% of the time. If rand() returns a value
+		// below this threshold, we'll expand an existing room.
+		int defaultLimit = maxInt / 4 * 3;
+		// Puzzles with huge amounts of big numbers aren't very exciting.
+		// Prevent any rooms larger than this.
+		int maxRoomSize = std::min(width, height) * 2 / 3;
+		// Once we get to rooms of this size, make it harder and harder to have
+		// a larger room.
+		int beginningDifficultyIncrease = std::min(width, height) / 3;
+		std::cout << "Default limit is " << defaultLimit << std::endl;
+		std::cout << "Maximum room size is " << maxRoomSize
+				  << ", difficulty begins increasing at "
+				  << beginningDifficultyIncrease << std::endl;
+		RoomMap roomMap;
+		for (int r = 0; r < height; r++) {
+			for (int c = 0; c < width; c++) {
+				// Fill in from left to right, top to bottom.
+				int roomId = 0;
+				if (c == 0 && r == 0) {
+					// We have to start a new room here for obvious reasons.
+					roomIds[r][c] = newRoomId++;
+				} else if (c == 0) {
+					roomId = roomIds[r - 1][c];
+				} else if (r == 0) {
+					roomId = roomIds[r][c - 1];
+				} else {
+					// Roll to determine if we take from above or below.
+					roomId = std::rand() < maxInt / 2 ? roomIds[r - 1][c]
+													  : roomIds[r][c - 1];
+				}
+				if (roomId != 0) {
+					int roomSize = (int)roomMap[roomId].size();
+					bool expand;
+					if (roomSize >= beginningDifficultyIncrease) {
+						// Expansion chance scales according to the current room
+						// size. Bigger rooms need to be  harder harder to
+						// expand, so they get lower limits. Slightly weird
+						// order of operations to ensure the most accurate value
+						// since this is integer division.
+						int adjustedLimit = defaultLimit / maxRoomSize *
+											(maxRoomSize - roomSize);
+						std::cout << "Room " << roomId
+								  << " is currently of size " << roomSize
+								  << ". To expand, need to be less than "
+								  << adjustedLimit << std::endl;
+						expand = std::rand() < adjustedLimit;
+					} else {
+						expand = std::rand() < defaultLimit;
+					}
+					roomIds[r][c] = expand ? roomId : newRoomId++;
+				}
+				roomMap[roomIds[r][c]].push_back({r, c});
+			}
+		}
+		printBoard(cellValues, roomIds);
+
+		// TODO "smoothing" - no 1x1s next to other 1x1s
+
+		std::cout << "Enter 'q' to stop." << std::endl;
+		char c;
+		std::cin >> c;
+		if (c == 'q') break;
+	}
 
 	return 999;
 }
@@ -387,7 +461,7 @@ int augmentExistingPuzzle() {
 int main(void) {
 	//	std::cout
 	//		<< "Generate random puzzle (g) or augment existing instance (a)? ";
-	char choice = 'a';
+	char choice = 'g';
 	// std::cin >> choice;
 	switch (choice) {
 		case 'g':
