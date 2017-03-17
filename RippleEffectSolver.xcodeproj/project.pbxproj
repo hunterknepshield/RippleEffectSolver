@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5A2FA5AE1E7B6B8200DFAF60 /* generate_puzzle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5A2FA5AC1E7B6B8200DFAF60 /* generate_puzzle.cc */; };
+		5A2FA5B11E7B6F8800DFAF60 /* augment_puzzle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5A2FA5AF1E7B6F8800DFAF60 /* augment_puzzle.cc */; };
 		5A6B233E1E51661800B82DBE /* solve_puzzle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5A6B233C1E51661800B82DBE /* solve_puzzle.cc */; };
 		5A89816D1E4DB24B0093AE21 /* validity_checks.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5A89816B1E4DB24B0093AE21 /* validity_checks.cc */; };
 		5AB016B41E6CE85D00109D69 /* print_board.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5AF3D34E1E4D7817008FC4F1 /* print_board.cc */; };
@@ -50,6 +51,8 @@
 		5A0935FD1E73583F007EF7E8 /* GeneratedSolution1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeneratedSolution1.txt; sourceTree = "<group>"; };
 		5A2FA5AC1E7B6B8200DFAF60 /* generate_puzzle.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = generate_puzzle.cc; sourceTree = "<group>"; };
 		5A2FA5AD1E7B6B8200DFAF60 /* generate_puzzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = generate_puzzle.h; sourceTree = "<group>"; };
+		5A2FA5AF1E7B6F8800DFAF60 /* augment_puzzle.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = augment_puzzle.cc; sourceTree = "<group>"; };
+		5A2FA5B01E7B6F8800DFAF60 /* augment_puzzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = augment_puzzle.h; sourceTree = "<group>"; };
 		5A4328331E568D82001FB223 /* Puzzle4.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Puzzle4.txt; sourceTree = "<group>"; };
 		5A4328341E568D8C001FB223 /* Solution4.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Solution4.txt; sourceTree = "<group>"; };
 		5A4328371E56A451001FB223 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
@@ -118,6 +121,10 @@
 				5AF3D3511E4D7C4E008FC4F1 /* Puzzles */,
 				5AF3D3461E4D385A008FC4F1 /* solver_main.cc */,
 				5AB016B81E6CEBAE00109D69 /* creator_main.cc */,
+				5A2FA5AF1E7B6F8800DFAF60 /* augment_puzzle.cc */,
+				5A2FA5B01E7B6F8800DFAF60 /* augment_puzzle.h */,
+				5A2FA5AC1E7B6B8200DFAF60 /* generate_puzzle.cc */,
+				5A2FA5AD1E7B6B8200DFAF60 /* generate_puzzle.h */,
 				5AF3D34E1E4D7817008FC4F1 /* print_board.cc */,
 				5AF3D34F1E4D7817008FC4F1 /* print_board.h */,
 				5AF3D3531E4D833E008FC4F1 /* read_input.cc */,
@@ -127,8 +134,6 @@
 				5A6B233F1E51664400B82DBE /* typedefs.h */,
 				5A89816B1E4DB24B0093AE21 /* validity_checks.cc */,
 				5A89816C1E4DB24B0093AE21 /* validity_checks.h */,
-				5A2FA5AC1E7B6B8200DFAF60 /* generate_puzzle.cc */,
-				5A2FA5AD1E7B6B8200DFAF60 /* generate_puzzle.h */,
 			);
 			path = RippleEffectSolver;
 			sourceTree = "<group>";
@@ -239,6 +244,7 @@
 				5AB016B51E6CE86200109D69 /* read_input.cc in Sources */,
 				5AB016B61E6CE86800109D69 /* solve_puzzle.cc in Sources */,
 				5AB016BA1E6CEC0100109D69 /* creator_main.cc in Sources */,
+				5A2FA5B11E7B6F8800DFAF60 /* augment_puzzle.cc in Sources */,
 				5AB016B71E6CE86800109D69 /* validity_checks.cc in Sources */,
 				5AB016B41E6CE85D00109D69 /* print_board.cc in Sources */,
 			);
