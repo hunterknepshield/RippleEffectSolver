@@ -17,7 +17,7 @@
 #include "typedefs.h"
 
 std::pair<Board, Board> generatePuzzle(int width, int height, int seed,
-									   int VERBOSITY, int SOLVING_VERBOSITY) {
+									   int verbosity, int solvingVerbosity) {
 	Board cellValues, roomIds;
 	for (int r = 0; r < height; r++) {
 		cellValues.emplace_back(width);
@@ -74,7 +74,7 @@ std::pair<Board, Board> generatePuzzle(int width, int height, int seed,
 			roomMap[roomIds[r][c]].push_back({r, c});
 		}
 	}
-	switch (VERBOSITY) {
+	switch (verbosity) {
 		case 2:
 		case 1:
 			std::cout << "Initial random room generation:" << std::endl;
@@ -142,7 +142,7 @@ std::pair<Board, Board> generatePuzzle(int width, int height, int seed,
 			}
 		}
 	}
-	switch (VERBOSITY) {
+	switch (verbosity) {
 		case 2:
 		case 1:
 			if (smoothed) {
@@ -198,7 +198,7 @@ std::pair<Board, Board> generatePuzzle(int width, int height, int seed,
 			}
 		}
 	}
-	switch (VERBOSITY) {
+	switch (verbosity) {
 		case 2:
 		case 1:
 			if (smoothed) {
@@ -272,7 +272,7 @@ std::pair<Board, Board> generatePuzzle(int width, int height, int seed,
 			smoothed = true;
 		}
 	}
-	switch (VERBOSITY) {
+	switch (verbosity) {
 		case 2:
 		case 1:
 			if (smoothed) {
@@ -336,7 +336,7 @@ std::pair<Board, Board> generatePuzzle(int width, int height, int seed,
 			}
 		}
 	}
-	switch (VERBOSITY) {
+	switch (verbosity) {
 		case 2:
 		case 1:
 			if (smoothed) {

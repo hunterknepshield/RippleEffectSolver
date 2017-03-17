@@ -23,10 +23,10 @@ std::pair<bool, Board> findSingleSolution(
 	Board /* intentional copy */ cellValues, const Board& roomIds,
 	const RoomMap& roomMap,
 	std::map<int, int> /* intentional copy */ cellsCompletedInRoom,
-	int VERBOSITY) {
+	int verbosity) {
 	// First, complete the things we know for sure.
 	fillKnownCellsInBoard(cellValues, roomIds, roomMap, cellsCompletedInRoom,
-						  VERBOSITY);
+						  verbosity);
 
 	// At this point, we're either done the puzzle or need to branch.
 	if (validateCompleteBoard(cellValues, roomIds, roomMap)) {
@@ -38,7 +38,7 @@ std::pair<bool, Board> findSingleSolution(
 	// return that. Otherwise, try the next value until one is found or all are
 	// exhausted. This is indeed DFS, not BFS, but it is guaranteed to
 	// eventually terminate for any input due to the nature of the puzzle.
-	switch (VERBOSITY) {
+	switch (verbosity) {
 		case 2:
 		case 1:
 			std::cout << "Unable to fill in any more cells with certainty. "
@@ -74,7 +74,7 @@ std::pair<bool, Board> findSingleSolution(
 					// work.
 					cellValues[r][c] = possibility;
 					cellsCompletedInRoom[room]++;
-					switch (VERBOSITY) {
+					switch (verbosity) {
 						case 2:
 							printBoard(cellValues, roomIds);
 						case 1:
@@ -86,7 +86,7 @@ std::pair<bool, Board> findSingleSolution(
 					}
 					const auto& resultAndBoard =
 						findSingleSolution(cellValues, roomIds, roomMap,
-										   cellsCompletedInRoom, VERBOSITY);
+										   cellsCompletedInRoom, verbosity);
 					if (resultAndBoard.first) {
 						// This is a valid completion.
 						return resultAndBoard;
@@ -108,10 +108,10 @@ std::pair<bool, std::set<Board>> findAllSolutions(
 	Board /* intentional copy */ cellValues, const Board& roomIds,
 	const RoomMap& roomMap,
 	std::map<int, int> /* intentional copy */ cellsCompletedInRoom,
-	int VERBOSITY, int* solutionCount) {
+	int verbosity, int* solutionCount) {
 	// First, complete the things we know for sure.
 	fillKnownCellsInBoard(cellValues, roomIds, roomMap, cellsCompletedInRoom,
-						  VERBOSITY);
+						  verbosity);
 
 	// At this point, we're either done the puzzle or need to branch.
 	if (validateCompleteBoard(cellValues, roomIds, roomMap)) {
@@ -128,7 +128,7 @@ std::pair<bool, std::set<Board>> findAllSolutions(
 	// return that. Otherwise, try the next value until one is found or all are
 	// exhausted. This is indeed DFS, not BFS, but it is guaranteed to
 	// eventually terminate for any input due to the nature of the puzzle.
-	switch (VERBOSITY) {
+	switch (verbosity) {
 		case 2:
 		case 1:
 			std::cout << "Unable to fill in any more cells with certainty. "
@@ -166,7 +166,7 @@ std::pair<bool, std::set<Board>> findAllSolutions(
 					// work.
 					cellValues[r][c] = possibility;
 					cellsCompletedInRoom[room]++;
-					switch (VERBOSITY) {
+					switch (verbosity) {
 						case 2:
 							printBoard(cellValues, roomIds);
 						case 1:
@@ -178,7 +178,7 @@ std::pair<bool, std::set<Board>> findAllSolutions(
 					}
 					const auto& resultAndBoards = findAllSolutions(
 						cellValues, roomIds, roomMap, cellsCompletedInRoom,
-						VERBOSITY, solutionCount);
+						verbosity, solutionCount);
 					if (resultAndBoards.first) {
 						// We have valid completions.
 						branchCompletions.insert(resultAndBoards.second.begin(),
@@ -214,7 +214,7 @@ Board aggregateBoards(const std::set<Board>& boards) {
 }
 
 int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
-						 const CellList& cellsInRoom, int VERBOSITY) {
+						 const CellList& cellsInRoom, int verbosity) {
 	int cellsFilled = 0;
 	bool modifiedRoom;
 	do {
@@ -264,7 +264,7 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 				cellValues[r][c] = validPossibility;
 				cellsFilled++;
 				modifiedRoom = true;
-				switch (VERBOSITY) {
+				switch (verbosity) {
 					case 2:
 						printBoard(cellValues, roomIds);
 					case 1:
@@ -311,7 +311,7 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 				cellValues[r][c] = possibleValue;
 				cellsFilled++;
 				modifiedRoom = true;
-				switch (VERBOSITY) {
+				switch (verbosity) {
 					case 2:
 						printBoard(cellValues, roomIds);
 					case 1:
@@ -338,7 +338,7 @@ int fillKnownCellsInRoom(Board& cellValues, const Board& roomIds, int room,
 void fillKnownCellsInBoard(Board& cellValues, const Board& roomIds,
 						   const RoomMap& roomMap,
 						   std::map<int, int>& cellsCompletedInRoom,
-						   int VERBOSITY) {
+						   int verbosity) {
 	bool modifiedBoard;
 	do {
 		modifiedBoard = false;
@@ -350,7 +350,7 @@ void fillKnownCellsInBoard(Board& cellValues, const Board& roomIds,
 			}
 			int cellsFilled =
 				fillKnownCellsInRoom(cellValues, roomIds, roomAndCells.first,
-									 roomAndCells.second, VERBOSITY);
+									 roomAndCells.second, verbosity);
 			cellsCompletedInRoom[roomAndCells.first] += cellsFilled;
 			if (cellsFilled > 0) {
 				modifiedBoard = true;

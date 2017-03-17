@@ -20,7 +20,7 @@
 
 // Verbosity settings. 0 = silent, 1 = print message on action, 2 = print
 // message and board on action.
-int VERBOSITY = 0;
+int verbosity = 0;
 
 // Multi-solution settings. false = find single solution (or none), true = find
 // all solutions (or none).
@@ -55,7 +55,7 @@ int main(void) {
 
 	if (FIND_ALL_SOLUTIONS) {
 		const auto& solvedWithBoards = findAllSolutions(
-			cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
+			cellValues, roomIds, roomMap, cellsCompletedInRoom, verbosity);
 		if (solvedWithBoards.first) {
 			std::cout << "The puzzle has " << solvedWithBoards.second.size()
 					  << " solution"
@@ -71,7 +71,7 @@ int main(void) {
 		}
 	} else {
 		const auto& solvedWithBoard = findSingleSolution(
-			cellValues, roomIds, roomMap, cellsCompletedInRoom, VERBOSITY);
+			cellValues, roomIds, roomMap, cellsCompletedInRoom, verbosity);
 		if (solvedWithBoard.first) {
 			std::cout << "Solved the puzzle. Final state:" << std::endl;
 			printBoard(solvedWithBoard.second, roomIds);

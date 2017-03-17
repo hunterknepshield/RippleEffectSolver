@@ -17,8 +17,8 @@
 #include "typedefs.h"
 #include "validity_checks.h"
 
-int augmentPuzzle(Board& cellValues, const Board& roomIds, int VERBOSITY,
-				  int SOLVING_VERBOSITY) {
+int augmentPuzzle(Board& cellValues, const Board& roomIds, int verbosity,
+				  int solvingVerbosity) {
 	std::cout << "Initial board state:" << std::endl;
 	printBoard(cellValues, roomIds);
 
@@ -57,7 +57,7 @@ int augmentPuzzle(Board& cellValues, const Board& roomIds, int VERBOSITY,
 			generateRoomMapAndCompletedCellMap(cellValues, roomIds);
 		// Figure out what we know for sure right now.
 		fillKnownCellsInBoard(cellValues, roomIds, roomMap,
-							  cellsCompletedInRoom, SOLVING_VERBOSITY);
+							  cellsCompletedInRoom, solvingVerbosity);
 		std::cout << "Currently known cell values:" << std::endl;
 		printBoard(cellValues, roomIds);
 
@@ -67,7 +67,7 @@ int augmentPuzzle(Board& cellValues, const Board& roomIds, int VERBOSITY,
 		std::set<Board> boards;
 		std::tie(solved, boards) =
 			findAllSolutions(cellValues, roomIds, roomMap, cellsCompletedInRoom,
-							 SOLVING_VERBOSITY);
+							 solvingVerbosity);
 
 		if (!solved) {
 			// We've run into a dead end. Undo if we can, otherwise fail.
@@ -106,7 +106,7 @@ int augmentPuzzle(Board& cellValues, const Board& roomIds, int VERBOSITY,
 			// This is the longest case by far. We have multiple solutions.
 			// First, give the user some info like what we know for sure,
 			// then ask them to modify a cell and loop.
-			switch (VERBOSITY) {
+			switch (verbosity) {
 				case 2:
 				case 1: {
 					int solution = 1;

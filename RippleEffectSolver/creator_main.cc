@@ -18,10 +18,10 @@
 // Verbosity settings. 0 = silent, 1 = print message and board on modification.
 // Not supplied as a parameter to solving routines, since those produce
 // comparatively huge amounts of output.
-int VERBOSITY = 1;
+int verbosity = 1;
 // Verbosity settings that are passed to solving routines. 0 = silent, 1 = print
 // message on action, 2 = print message and board on action.
-int SOLVING_VERBOSITY = 0;
+int solvingVerbosity = 0;
 
 int main(void) {
 	while (true) {
@@ -52,7 +52,7 @@ int main(void) {
 
 					Board cellValues, roomIds;
 					std::tie(cellValues, roomIds) = generatePuzzle(
-						width, height, seed, VERBOSITY, SOLVING_VERBOSITY);
+						width, height, seed, verbosity, solvingVerbosity);
 
 					// Attempt to solve the puzzle.
 					RoomMap roomMap;
@@ -70,7 +70,7 @@ int main(void) {
 							<< std::endl;
 						const auto& solvedWithBoard = findSingleSolution(
 							cellValues, roomIds, roomMap, cellsCompletedInRoom,
-							SOLVING_VERBOSITY);
+							solvingVerbosity);
 						if (!solvedWithBoard.first) {
 							std::cout
 								<< "This board can't be solved. Trying again..."
@@ -79,8 +79,8 @@ int main(void) {
 							std::cout << "This board is solvable. Beginning "
 										 "augmentation..."
 									  << std::endl;
-							return augmentPuzzle(cellValues, roomIds, VERBOSITY,
-												 SOLVING_VERBOSITY);
+							return augmentPuzzle(cellValues, roomIds, verbosity,
+												 solvingVerbosity);
 						}
 					}
 				}
@@ -96,8 +96,8 @@ int main(void) {
 					!readRooms(boardWidth, cellValues.size(), &roomIds)) {
 					return 1;
 				}
-				return augmentPuzzle(cellValues, roomIds, VERBOSITY,
-									 SOLVING_VERBOSITY);
+				return augmentPuzzle(cellValues, roomIds, verbosity,
+									 solvingVerbosity);
 			}
 			default:
 				std::cerr << "Invalid choice.";
