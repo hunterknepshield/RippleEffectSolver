@@ -48,14 +48,16 @@ difficulty.
 
 ## Binary Options
 There are a few options in the code to control output.
-- In `solver_main.cc` and `creator_main.cc`, there is a VERBOSITY value to
-control how much info gets printed.
-- In `solver_main.cc`, there is a FIND_ALL_SOLUTIONS value to control whether
-all solutions are found or not.
+- In `solver_main.cc`, there is a `verbosity` value that controls the amount of
+info that gets printed.
+- In `creator_main.cc`, there are `verbosity` and `solvingVerbosity` values that
+control the amount of info that gets printed.
+- In `solver_main.cc`, there is a `generateAllSolutions` value that controls
+whether all solutions are found or not.
 - In `print_board.h`, there is a `#define` that controls the `printBoard`
 function. Specifically, un-commenting it prevents special Unicode grid
-characters from printing. Xcode usually plays nice with them, but many fonts and
-terminals usually don't.
+characters from printing. Xcode usually plays nice with them, but some fonts and
+terminals may not.
 
 ## Building the Binaries
 This code makes use of several C++11 features, so your compiler must support

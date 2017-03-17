@@ -24,7 +24,7 @@ int verbosity = 0;
 
 // Multi-solution settings. false = find single solution (or none), true = find
 // all solutions (or none).
-bool FIND_ALL_SOLUTIONS = false;
+bool generateAllSolutions = false;
 
 int main(void) {
 	size_t boardWidth = 0;
@@ -53,7 +53,7 @@ int main(void) {
 	// To get the value of cell (r, c), use cellValues[r][c].
 	// To get the room ID of cell (r, c), use roomIds[r][c].
 
-	if (FIND_ALL_SOLUTIONS) {
+	if (generateAllSolutions) {
 		const auto& solvedWithBoards = findAllSolutions(
 			cellValues, roomIds, roomMap, cellsCompletedInRoom, verbosity);
 		if (solvedWithBoards.first) {
