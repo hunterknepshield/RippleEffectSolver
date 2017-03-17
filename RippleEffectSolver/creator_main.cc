@@ -660,6 +660,7 @@ int generateAndAugment() {
 			if (roomAndCells.second.size() == 1) {
 				int r, c;
 				std::tie(r, c) = roomAndCells.second.front();
+				int mergeRoomId1 = 0, mergeRoomId2 = 0;
 				if (r != 0 && r != height - 1) {
 					// Check above and below
 					int roomAbove = roomIds[r - 1][c];
@@ -668,6 +669,8 @@ int generateAndAugment() {
 						roomMap[roomBelow].size() == 2) {
 						std::cout << "Vertical 2-1-2 at (" << r + 1 << ", "
 								  << c + 1 << ")" << std::endl;
+						mergeRoomId1 = roomAbove;
+						mergeRoomId2 = roomBelow;
 					}
 				}
 				if (c != 0 && c != width - 1) {
@@ -678,9 +681,33 @@ int generateAndAugment() {
 						roomMap[roomRight].size() == 2) {
 						std::cout << "Horizontal 2-1-2 at (" << r + 1 << ", "
 								  << c + 1 << ")" << std::endl;
+						mergeRoomId1 = roomLeft;
+						mergeRoomId2 = roomRight;
 					}
 				}
-				// TODO merge whichever is convenient, probably not both.
+				if (mergeRoomId1) {
+					// Merge these two rooms into the current one.
+					// TODO determine if merging all 3 or just two is sufficient
+					// to remove most invalidities.
+					int roomId = roomAndCells.first;
+					for (const auto& cell : roomMap[mergeRoomId1]) {
+						std::tie(r, c) = cell;
+						roomIds[r][c] = roomId;
+						roomMap[roomId].push_back(cell);
+					}
+					roomMap.erase(mergeRoomId1);
+					for (const auto& cell : roomMap[mergeRoomId2]) {
+						std::tie(r, c) = cell;
+						roomIds[r][c] = roomId;
+						roomMap[roomId].push_back(cell);
+					}
+					roomMap.erase(mergeRoomId2);
+					std::tie(r, c) = roomAndCells.second.front();
+					std::cout << "Merged rooms " << mergeRoomId1 << " and "
+							  << mergeRoomId2 << " into room with cell ("
+							  << r + 1 << ", " << c + 1 << ")" << std::endl;
+					smoothed = true;
+				}
 			}
 		}
 		switch (VERBOSITY) {
