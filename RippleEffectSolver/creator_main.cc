@@ -654,7 +654,7 @@ int generateAndAugment() {
 				break;
 		}
 
-		// 1x1 inbetween two 2x1s
+		// 1x1 in-between two 2x1s
 		smoothed = false;
 		for (const auto& roomAndCells : roomMap) {
 			if (roomAndCells.second.size() == 1) {
@@ -667,8 +667,6 @@ int generateAndAugment() {
 					int roomBelow = roomIds[r + 1][c];
 					if (roomMap[roomAbove].size() == 2 &&
 						roomMap[roomBelow].size() == 2) {
-						std::cout << "Vertical 2-1-2 at (" << r + 1 << ", "
-								  << c + 1 << ")" << std::endl;
 						mergeRoomId1 = roomAbove;
 						mergeRoomId2 = roomBelow;
 					}
@@ -679,8 +677,6 @@ int generateAndAugment() {
 					int roomRight = roomIds[r][c + 1];
 					if (roomMap[roomLeft].size() == 2 &&
 						roomMap[roomRight].size() == 2) {
-						std::cout << "Horizontal 2-1-2 at (" << r + 1 << ", "
-								  << c + 1 << ")" << std::endl;
 						mergeRoomId1 = roomLeft;
 						mergeRoomId2 = roomRight;
 					}
@@ -703,9 +699,6 @@ int generateAndAugment() {
 					}
 					roomMap.erase(mergeRoomId2);
 					std::tie(r, c) = roomAndCells.second.front();
-					std::cout << "Merged rooms " << mergeRoomId1 << " and "
-							  << mergeRoomId2 << " into room with cell ("
-							  << r + 1 << ", " << c + 1 << ")" << std::endl;
 					smoothed = true;
 				}
 			}
