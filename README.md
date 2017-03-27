@@ -66,7 +66,7 @@ that standard.
 There is a makefile included, just open the appropriate directory in a terminal
 and run `make`. It will build two binaries, `solver` and `creator`.
 
-Alternatively, this project is already uploaded in Xcode's project format if you
+Alternatively, this project is already committed in Xcode's project format if you
 run macOS.
 
 ## Running the Binaries
